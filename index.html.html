@@ -1,0 +1,1415 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Fat Loss Planner (Copy)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#EDEFEA; --surface:#FAFBF8; --surface2:#E3E7E0; --ink:#16201A; --muted:#5B675F; --line:#D2D8CF;
+  --diet:#0F766E; --diet-soft:#D3ECE8; --act:#C2410C; --act-soft:#FBE3D6;
+  --warn:#A16207; --warn-soft:#FAEFCB; --bad:#B42318; --bad-soft:#F8DEDA;
+  --protein:#4338CA; --protein-soft:#E0E0F7; --wt:#1D4ED8;
+  --display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#101512; --surface:#18201B; --surface2:#222C25; --ink:#E8EEE9; --muted:#9AA79E; --line:#2C3830;
+    --diet:#2DD4BF; --diet-soft:#12332F; --act:#FB923C; --act-soft:#3A2214;
+    --warn:#FACC15; --warn-soft:#352C0E; --bad:#F87171; --bad-soft:#3B1917;
+    --protein:#A5B4FC; --protein-soft:#23264A; --wt:#93C5FD;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#101512; --surface:#18201B; --surface2:#222C25; --ink:#E8EEE9; --muted:#9AA79E; --line:#2C3830;
+  --diet:#2DD4BF; --diet-soft:#12332F; --act:#FB923C; --act-soft:#3A2214;
+  --warn:#FACC15; --warn-soft:#352C0E; --bad:#F87171; --bad-soft:#3B1917;
+  --protein:#A5B4FC; --protein-soft:#23264A; --wt:#93C5FD;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;padding-inline:16px;padding-block:0 56px}
+.wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1,h2{font-family:var(--display);font-weight:700;letter-spacing:.01em;margin:0;text-wrap:balance}
+h1{font-size:28px;line-height:1}
+h2{font-size:22px;line-height:1.1}
+.num{font-variant-numeric:tabular-nums}
+.label{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--diet);outline-offset:2px}
+.note{font-size:12px;color:var(--muted);margin:0}
+.hint{font-size:11px;color:var(--muted)}
+[hidden]{display:none!important}
+
+/* top bar + tabs */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:14px 10px;display:flex;flex-direction:column;gap:12px;border-bottom:1px solid var(--line);margin-inline:-16px;padding-inline:16px}
+.topbar .in{max-width:720px;margin:0 auto;width:100%;display:flex;flex-direction:column;gap:12px}
+.titlerow{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.sync{font-size:12px;color:var(--muted)}
+.tabs{display:grid;grid-template-columns:repeat(5,1fr);background:var(--surface2);border-radius:10px;padding:3px;gap:3px}
+.tabs button{border:0;background:transparent;border-radius:8px;padding:8px 2px;font-weight:700;font-size:13px;color:var(--muted)}
+.tabs button.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.cardhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+
+.datenav{display:flex;align-items:center;justify-content:center;gap:8px}
+.iconbtn{border:1px solid var(--line);background:var(--surface);border-radius:8px;width:36px;height:36px;display:grid;place-items:center;font-size:18px;line-height:1}
+.iconbtn:disabled{opacity:.35;cursor:default}
+.datelabel{min-width:130px;text-align:center;font-weight:700}
+.linkbtn{border:0;background:transparent;color:var(--diet);font-weight:700;font-size:13px;padding:4px}
+
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+input[type=date]{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:7px 10px;width:100%;min-width:0}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.steps span{font-size:12px;font-weight:700;color:var(--muted);border-top:3px solid var(--line);padding-top:6px}
+.steps span.on{color:var(--ink);border-color:var(--diet)}
+.steps span.done{color:var(--diet);border-color:var(--diet)}
+.seg.full3{display:grid;grid-template-columns:repeat(3,1fr);width:100%}
+.zones{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.zone{display:grid;grid-template-columns:1fr auto auto;gap:12px;padding:8px 12px;border-top:1px solid var(--line);font-size:13px}
+.zone:first-child{border-top:0}
+.zone.on{background:var(--diet-soft);font-weight:700}
+.prog{height:12px;border-radius:6px;background:var(--surface2);overflow:hidden}
+.prog div{height:100%;background:var(--diet);transition:width .3s}
+input[type=number]{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:8px 10px;width:100%;min-width:0}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:540px){.grid{grid-template-columns:1fr 1fr}}
+.inputs input[type=number]{font-size:20px;font-weight:700;padding:10px 12px}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.btn{border:0;background:var(--diet);color:var(--surface);border-radius:8px;padding:9px 16px;font-weight:700;white-space:nowrap}
+.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink);font-weight:600}
+.btn.ghost.armed{background:var(--bad);border-color:var(--bad);color:var(--surface)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;padding:3px;background:var(--bg);gap:2px;flex-wrap:wrap}
+.seg button{border:0;background:transparent;border-radius:6px;padding:6px 12px;font-size:13px;font-weight:600;color:var(--muted)}
+.seg.full{display:grid;grid-template-columns:1fr 1fr;width:100%}
+.seg button.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+
+/* hero */
+.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.big{font-family:var(--display);font-weight:700;font-size:72px;line-height:.85;letter-spacing:-.01em}
+.big small{font-size:22px;font-weight:600;color:var(--muted);margin-left:4px}
+.pill{display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;font-size:13px;font-weight:600}
+.pill.ok{background:var(--diet-soft);color:var(--diet)} .pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)} .pill.idle{background:var(--surface2);color:var(--muted)}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.part{border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.part.diet{background:var(--diet-soft)} .part.act{background:var(--act-soft)}
+.part b{font-family:var(--display);font-size:34px;line-height:1;font-weight:700}
+.part.diet b{color:var(--diet)} .part.act b{color:var(--act)}
+.part .sub{font-size:12px;color:var(--muted)}
+.minis{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.mini{background:var(--surface);padding:9px 12px;display:flex;flex-direction:column}
+.mini b{font-family:var(--display);font-size:24px;font-weight:600;line-height:1.05}
+.gauge{position:relative;height:12px;border-radius:6px;background:var(--surface2);overflow:hidden}
+.gauge .fill{position:absolute;inset:0 auto 0 0;background:var(--diet);transition:width .3s}
+.gauge .fill.warn{background:var(--warn)} .gauge .fill.bad{background:var(--bad)}
+.gauge .mark{position:absolute;top:0;bottom:0;width:2px;background:var(--ink)}
+.bar{height:8px;border-radius:4px;background:var(--protein-soft);overflow:hidden}
+.bar div{height:100%;background:var(--protein);transition:width .3s}
+@media (max-width:540px){.big{font-size:60px}.part b{font-size:28px}}
+
+/* tomorrow */
+.status{border-radius:10px;padding:10px 12px;font-size:14px}
+.status.ok{background:var(--diet-soft)} .status.bad{background:var(--bad-soft)} .status.idle{background:var(--surface2)}
+.ask{display:grid;grid-template-columns:1fr auto;gap:10px 14px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.ask .q{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px}
+.ask .q input{width:110px;font-weight:700}
+.ask .a{text-align:right}
+.ask .a b{font-family:var(--display);font-size:30px;line-height:1;display:block}
+.ask .a span{font-size:12px;color:var(--muted)}
+@media (max-width:460px){.ask{grid-template-columns:1fr}.ask .a{text-align:left}}
+
+/* results rows */
+.res{display:flex;flex-direction:column;gap:10px}
+.reshead{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;border-radius:10px;padding:14px;background:var(--surface2)}
+.reshead b{font-family:var(--display);font-size:42px;line-height:.95;font-weight:700}
+@media (max-width:540px){.reshead b{font-size:32px}}
+.reshead .side{font-size:13px;color:var(--muted);text-align:right}
+.rows{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.r{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:9px 12px;border-top:1px solid var(--line)}
+.r:first-child{border-top:0}
+.r i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.r .t{font-weight:600}
+.r .t small{display:block;font-weight:500;font-size:12px;color:var(--muted)}
+.r b{font-family:var(--display);font-size:22px;font-weight:600}
+.r.sum{background:var(--bg)}
+.apply{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border:1.5px solid var(--diet);border-radius:10px;padding:12px 14px}
+.btn:disabled{opacity:.6;cursor:default}
+.cmp{display:grid;grid-template-columns:auto 1fr 1fr;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.cmp>div{padding:9px 12px;border-top:1px solid var(--line)}
+.cmp>div:nth-child(-n+3){border-top:0;background:var(--bg)}
+.cmp .h{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.cmp .k{font-weight:700}
+.cmp b{font-family:var(--display);font-size:20px;font-weight:600;display:block;line-height:1.1;white-space:nowrap}
+.cmp small{font-size:12px;color:var(--muted)}
+.flag{border-radius:8px;padding:10px 12px;font-size:13px;line-height:1.45}
+.flag.warn{background:var(--warn-soft)} .flag.bad{background:var(--bad-soft)} .flag.ok{background:var(--diet-soft)}
+
+/* week */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+@media (max-width:540px){.kpis{grid-template-columns:1fr 1fr}}
+.kpi{background:var(--surface);padding:10px 12px;display:flex;flex-direction:column}
+.kpi b{font-family:var(--display);font-size:26px;font-weight:600;line-height:1.05}
+.key{display:flex;gap:14px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+.key i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.chart{position:relative}
+.chart svg{display:block;width:100%;height:auto}
+.hit{cursor:pointer}
+.hit:hover rect.bgh,.hit.on rect.bgh{fill:var(--surface2)}
+.remain{border-radius:10px;padding:14px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:var(--surface2)}
+.remain b{font-family:var(--display);font-size:38px;line-height:1}
+.remain.ok b{color:var(--diet)} .remain.warn b{color:var(--warn)}
+.wbar{height:8px;border-radius:4px;background:var(--surface2);overflow:hidden}
+.wbar div{height:100%;background:var(--wt);transition:width .3s}
+
+/* settings */
+.sgroup{display:flex;flex-direction:column;gap:12px}
+.sgroup + .sgroup{border-top:1px solid var(--line);padding-top:16px}
+
+.tip{position:fixed;z-index:10;pointer-events:none;background:var(--ink);color:var(--bg);border-radius:8px;padding:8px 10px;font-size:12px;line-height:1.5;min-width:160px;box-shadow:0 4px 16px rgba(0,0,0,.18)}
+.tip b{font-size:13px;display:block;margin-bottom:2px}
+.tip .tr{display:flex;justify-content:space-between;gap:14px}
+.tip i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:13px;font-weight:600;opacity:0;transition:opacity .2s;pointer-events:none;max-width:calc(100% - 32px)}
+.toast.show{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="topbar"><div class="in">
+  <div class="titlerow"><h1>Deficit Log</h1><span class="sync" id="syncState">Loading…</span></div>
+  <nav class="tabs" role="tablist">
+    <button type="button" data-tab="today" class="on">Today</button>
+    <button type="button" data-tab="week">Week</button>
+    <button type="button" data-tab="plan">Planner</button>
+    <button type="button" data-tab="settings">Settings</button>
+     <button type="button" data-tab="coach">Coach+</button>
+  </nav>
+</div></div>
+
+<div class="wrap" style="padding-top:16px">
+<div class="flag bad" id="storeWarn" hidden><b>This browser isn’t saving your data.</b> Everything resets when you close it. Open this link in Chrome or Safari directly (not inside WhatsApp or Instagram), and use Settings → Backup to keep a copy.</div>
+
+<!-- ================= TODAY ================= -->
+<div data-view="today" class="wrap" style="gap:16px">
+  <div class="datenav">
+    <button class="iconbtn" id="prevDay" aria-label="Previous day">‹</button>
+    <div class="datelabel" id="dateLabel">Today</div>
+    <button class="iconbtn" id="nextDay" aria-label="Next day">›</button>
+  </div>
+  <button type="button" class="linkbtn" id="goToday" hidden>Back to today</button>
+
+  <section class="card inputs">
+    <div class="cardhead"><h2 id="inTitle">Log today</h2><span class="note">Saves automatically</span></div>
+    <div class="grid">
+      <div class="field"><label class="label" for="eKcal">Calories eaten</label><input type="number" id="eKcal" min="0" step="1" inputmode="numeric" placeholder="1600"></div>
+      <div class="field"><label class="label" for="aSteps">Steps</label><input type="number" id="aSteps" min="0" step="100" inputmode="numeric" placeholder="0"><span class="hint num" id="stepsKcalHint">≈ 0 kcal</span></div>
+      <div class="field"><label class="label" for="aWorkout">Workout kcal</label><input type="number" id="aWorkout" min="0" step="10" inputmode="numeric" placeholder="0"></div>
+      <div class="field"><label class="label" for="wInput">Bodyweight kg</label><input type="number" id="wInput" min="20" max="250" step="0.05" inputmode="decimal" placeholder="60.0"><span class="hint num" id="bfHint"></span></div>
+      <div class="field"><label class="label" for="eProt">Protein g</label><input type="number" id="eProt" min="0" step="1" inputmode="numeric" placeholder="optional"></div>
+    </div>
+    <div class="row"><span class="note">Step calories use your height and weight.</span><button type="button" class="btn ghost" id="resetBtn">Reset day</button></div>
+  </section>
+
+  <section class="card">
+    <div class="hero">
+      <div><div class="label" id="heroLabel">Total deficit today</div><div class="big num" id="totalBig">0<small>kcal</small></div></div>
+      <span class="pill idle" id="statusPill">No entries yet</span>
+    </div>
+    <div class="split num">
+      <div class="part diet"><span class="label">From diet</span><b id="dietDef">0</b><span class="sub" id="dietSub"></span></div>
+      <div class="part act"><span class="label">From steps + workout</span><b id="actDef">0</b><span class="sub" id="actSub"></span></div>
+    </div>
+    <div>
+      <div class="gauge" aria-hidden="true"><div class="fill" id="gaugeFill" style="width:0%"></div><div class="mark" id="gaugeMark"></div></div>
+    </div>
+    <div class="minis num">
+      <div class="mini"><span class="label">Eaten</span><b id="stEaten">0</b></div>
+      <div class="mini"><span class="label">Left to eat</span><b id="stLeft">0</b></div>
+      <div class="mini"><span class="label">Target</span><b id="stTarget">0</b></div>
+    </div>
+    <div class="row" style="gap:6px"><span class="label">Protein</span><span class="num" id="protText" style="font-size:13px">0 / 130 g</span></div>
+    <div class="bar" style="margin-top:-8px"><div id="protFill" style="width:0%"></div></div>
+  </section>
+
+  <section class="card" id="tomorrow">
+    <div class="cardhead"><h2 id="tmTitle">Plan for tomorrow</h2>
+      <div class="seg"><button type="button" id="tmOne" class="on">Tomorrow</button><button type="button" id="tmSpread">Rest of the 7 days</button></div>
+    </div>
+    <div class="status idle" id="tmStatus"></div>
+    <div id="tmAsk">
+      <div class="res">
+        <div class="ask">
+          <div class="q"><span>If I walk</span><input type="number" id="tmSteps" min="0" step="500" inputmode="numeric"><span>steps</span></div>
+          <div class="a"><span>I can eat</span><b class="num" id="tmCalOut">—</b></div>
+        </div>
+        <div class="ask">
+          <div class="q"><span>If I eat</span><input type="number" id="tmCal" min="0" step="10" inputmode="numeric"><span>kcal</span></div>
+          <div class="a"><span>I need to walk</span><b class="num" id="tmStepsOut">—</b></div>
+        </div>
+        <p class="note" id="tmNote"></p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ================= WEEK ================= -->
+<div data-view="week" class="wrap" style="gap:16px" hidden>
+  <section class="card">
+    <div class="cardhead"><h2>This week</h2><span class="pill idle num" id="weekDay">Day 1 of 7</span></div>
+    <div class="row"><span class="note num" id="weekRange"></span><button type="button" class="linkbtn" id="restartWeek">Start new 7 days today</button></div>
+    <div class="status idle" id="wkVerdict"></div>
+    <div class="cmp num" id="wkCmp"></div>
+    <p class="note" id="wkPlanSrc"></p>
+  </section>
+
+  <section class="card">
+    <div class="cardhead"><h2>Deficit breakdown</h2></div>
+    <div class="kpis num">
+      <div class="kpi"><span class="label" id="wkTotLabel">Total</span><b id="wkTotal">0</b></div>
+      <div class="kpi"><span class="label">Diet</span><b id="wkDiet" style="color:var(--diet)">0</b></div>
+      <div class="kpi"><span class="label">Steps + workout</span><b id="wkAct" style="color:var(--act)">0</b></div>
+      <div class="kpi"><span class="label">≈ Fat loss</span><b id="wkFat">0 kg</b></div>
+    </div>
+    <div class="row"><span class="label">Last 7 days · tap a bar</span><span class="key"><span><i style="background:var(--diet)"></i>Diet</span><span><i style="background:var(--act)"></i>Steps + workout</span></span></div>
+    <div class="chart" id="chart"></div>
+    <p class="note">Fat loss is a rough estimate: deficit ÷ 7,700 kcal per kg.</p>
+  </section>
+
+  <section class="card">
+    <div class="cardhead"><h2>Bodyweight</h2></div>
+    <div class="remain" id="remainBox">
+      <div><div class="label" id="remainLabel">Left to this week’s target</div><b class="num" id="remainVal">—</b></div>
+      <div class="note num" id="remainNote" style="max-width:320px"></div>
+    </div>
+    <div class="wbar" aria-hidden="true"><div id="wProg" style="width:0%"></div></div>
+    <div class="kpis num">
+      <div class="kpi"><span class="label">Week start</span><b id="wStart">—</b><span class="hint" id="wStartFrom"></span></div>
+      <div class="kpi"><span class="label">Week target</span><b id="wTarget">—</b></div>
+      <div class="kpi"><span class="label">Current</span><b id="wNow">—</b></div>
+      <div class="kpi"><span class="label">Change</span><b id="wChange">—</b></div>
+    </div>
+    <div class="chart" id="wChart"></div>
+    <p class="note" id="finalGoalNote"></p>
+  </section>
+</div>
+
+<!-- ================= SETUP ================= -->
+<div data-view="setup" class="wrap" style="gap:16px" hidden>
+  <div class="steps" id="wzSteps"><span data-s="1">1 · About you</span><span data-s="2">2 · Your goal</span><span data-s="3">3 · Your plan</span></div>
+
+  <section class="card" data-step="1">
+    <div><h2>Tell us about you</h2><p class="note">These numbers set up everything else. You can change them later.</p></div>
+    <div class="grid">
+      <div class="field"><label class="label" for="zW">Weight kg</label><input type="number" id="zW" min="30" max="250" step="0.1" inputmode="decimal" placeholder="70"></div>
+      <div class="field"><label class="label" for="zFt">Height ft</label><input type="number" id="zFt" min="3" max="7" step="1" inputmode="numeric" placeholder="5"></div>
+      <div class="field"><label class="label" for="zIn">Height in</label><input type="number" id="zIn" min="0" max="11.5" step="0.5" inputmode="decimal" placeholder="8"></div>
+      <div class="field"><label class="label" for="zBf">Body fat %</label><input type="number" id="zBf" min="4" max="50" step="0.5" inputmode="decimal" placeholder="18"></div>
+    </div>
+    <p class="note">Not sure of your body fat? Rough guide for men: clear abs ≈ 10–12%, upper abs visible ≈ 13–15%, faint outline ≈ 16–18%, no abs ≈ 20%+.</p>
+    <div class="field" hidden><span class="label">Your day, outside planned walks and workouts</span>
+      <div class="seg full3" id="zLife"><button type="button" data-v="1.2" class="on">Mostly sitting</button><button type="button" data-v="1.35">Mixed</button><button type="button" data-v="1.5">On my feet</button></div>
+    </div>
+    <div class="grid">
+      <div class="field"><label class="label" for="zMaint">Maintenance kcal</label><input type="number" id="zMaint" min="1000" max="5000" step="10" inputmode="numeric"><span class="hint num" id="zMaintHint"></span></div>
+    </div>
+  </section>
+
+  <section class="card" data-step="2" hidden>
+    <div><h2>Set your goal</h2><p class="note">Pick the body fat you want to reach. Add a date if you have a deadline.</p></div>
+    <div class="grid">
+      <div class="field"><label class="label" for="zGoal">Goal body fat %</label><input type="number" id="zGoal" min="4" max="40" step="0.5" inputmode="decimal"></div>
+    </div>
+    <div class="kpis num" id="zGoalKpis"></div>
+    <div class="field"><span class="label">How fast?</span>
+      <div class="seg full"><button type="button" id="zPaceSafe" class="on">Safe pace (recommended)</button><button type="button" id="zPaceDate">By a date</button></div>
+    </div>
+    <div class="grid" id="zDateRow" hidden><div class="field"><label class="label" for="zDate">Reach it by</label><input type="date" id="zDate"></div></div>
+    <div class="res" id="zPaceRes"></div>
+  </section>
+
+  <section class="card" data-step="3" hidden>
+    <div><h2>Your plan</h2><p class="note">Choose how much you’ll walk. The plan works out how much to eat.</p></div>
+    <div class="res" id="zSummary"></div>
+    <div class="grid">
+      <div class="field"><label class="label" for="zSteps">Steps / day</label><input type="number" id="zSteps" min="0" step="500" inputmode="numeric"></div>
+      <div class="field"><label class="label" for="zWork">Workout kcal / day</label><input type="number" id="zWork" min="0" step="10" inputmode="numeric"><span class="hint">Average per day, 0 if unsure</span></div>
+    </div>
+    <div class="res" id="zPlanRes"></div>
+  </section>
+
+  <div class="row">
+    <button type="button" class="btn ghost" id="zBack">Back</button>
+    <button type="button" class="btn" id="zNext">Next</button>
+  </div>
+  <button type="button" class="linkbtn" id="zSkip" hidden>Cancel and go back to the tracker</button>
+</div>
+
+<!-- ================= PLANNER ================= -->
+<div data-view="plan" class="wrap" style="gap:16px" hidden>
+  <section class="card" id="planner">
+    <div class="cardhead"><h2>Weekly planner</h2></div>
+    <div class="seg full">
+      <button type="button" id="modeTarget" class="on">I have a target weight</button>
+      <button type="button" id="modeEstimate">What will I lose?</button>
+    </div>
+    <div class="row" data-mode="target" style="justify-content:flex-start"><span class="label">I choose my</span>
+      <div class="seg"><button type="button" id="fixDiet" class="on">Calories</button><button type="button" id="fixSteps">Steps</button></div>
+    </div>
+    <div class="grid">
+      <div class="field"><label class="label" for="pCur">Current weight kg</label><input type="number" id="pCur" min="20" step="0.1" inputmode="decimal"></div>
+      <div class="field" data-mode="target"><label class="label" for="pGoalW">Target weight kg</label><input type="number" id="pGoalW" min="20" step="0.1" inputmode="decimal"></div>
+      <div class="field"><label class="label" for="pDays">Days</label><input type="number" id="pDays" min="1" max="60" step="1" inputmode="numeric"><span class="hint" id="pDaysHint"></span></div>
+      <div class="field" data-cal><label class="label" for="pIntake">Calories / day</label><input type="number" id="pIntake" min="0" step="10" inputmode="numeric"></div>
+      <div class="field" data-steps><label class="label" for="pSteps">Steps / day</label><input type="number" id="pSteps" min="0" step="500" inputmode="numeric"></div>
+      <div class="field"><label class="label" for="pWorkout">Workout kcal / day</label><input type="number" id="pWorkout" min="0" step="10" inputmode="numeric"></div>
+    </div>
+    <div class="res" id="plRes"></div>
+    <div class="row" style="justify-content:flex-end"><button type="button" class="btn ghost" id="plReset">Reset planner</button></div>
+  </section>
+</div>
+
+<!-- ================= SETTINGS ================= -->
+<div data-view="settings" class="wrap" style="gap:16px" hidden>
+  <section class="card">
+    <div class="sgroup">
+      <div class="row"><h2>Body fat &amp; goal</h2><button type="button" class="btn ghost" id="openSetup">Redo setup</button></div>
+      <div class="grid">
+        <div class="field"><label class="label" for="sBfPct">Body fat %</label><input type="number" id="sBfPct" min="3" max="50" step="0.1" inputmode="decimal"></div>
+        <div class="field"><label class="label" for="sBfW">Measured at kg</label><input type="number" id="sBfW" min="20" step="0.1" inputmode="decimal"></div>
+        <div class="field"><label class="label" for="sGoalBf">Goal body fat %</label><input type="number" id="sGoalBf" min="3" max="40" step="0.5" inputmode="decimal"></div>
+        <div class="field"><label class="label" for="sGoalDate">Reach it by</label><input type="date" id="sGoalDate"><span class="hint">Blank = safe pace</span></div>
+      </div>
+      <div class="status idle num" id="bfSummary"></div>
+    </div>
+    <div class="sgroup">
+      <h2>Daily plan</h2>
+      <div class="grid">
+        <div class="field"><label class="label" for="sMaint">Maintenance kcal</label><input type="number" id="sMaint" min="800" step="10" inputmode="numeric"><span class="hint num" id="sMaintHint"></span></div>
+        <div class="field"><label class="label" for="sIntake">Target calories</label><input type="number" id="sIntake" min="500" step="10" inputmode="numeric"><span class="hint num" id="sDietDef"></span></div>
+        <div class="field"><label class="label" for="sPlanSteps">Planned steps / day</label><input type="number" id="sPlanSteps" min="0" step="500" inputmode="numeric"></div>
+        <div class="field"><label class="label" for="sPlanWork">Planned workout kcal / day</label><input type="number" id="sPlanWork" min="0" step="10" inputmode="numeric"></div>
+        <div class="field"><label class="label" for="sProt">Protein goal g</label><input type="number" id="sProt" min="0" step="5" inputmode="numeric"></div>
+      </div>
+      <div class="row" style="justify-content:flex-start"><span class="label">Maintenance</span><div class="seg"><button type="button" id="mAuto">Auto · weight × 31</button><button type="button" id="mManual">Manual</button></div></div>
+      <p class="note">Auto recalculates every time you log your weight, so it drops as you lose weight. Typing a number switches to manual.</p>
+    </div>
+    <div class="sgroup">
+      <h2>Weekly plan</h2>
+      <div class="row" style="justify-content:flex-start"><span class="label">Track the week against</span>
+        <div class="seg"><button type="button" id="basisBf">Body fat rate</button><button type="button" id="basisHab" class="on">My daily plan</button><button type="button" id="basisWt">Weight target</button></div>
+      </div>
+      <p class="note num" id="basisNote"></p>
+      <div class="grid">
+        <div class="field"><label class="label" for="sAnchor">Week starts on (day 1)</label><input type="date" id="sAnchor"><span class="hint num" id="sAnchorHint"></span></div>
+        <div class="field"><label class="label" for="wGoal">Weekly weight goal kg</label><input type="number" id="wGoal" step="0.05" inputmode="decimal"><span class="hint">Loss −0.3 · Gain +0.25</span></div>
+        <div class="field"><label class="label" for="sWeekT">This week’s target kg</label><input type="number" id="sWeekT" min="20" step="0.05" inputmode="decimal" placeholder="Auto"><span class="hint num" id="sWeekTHint"></span></div>
+        <div class="field"><label class="label" for="sWkDef">Weekly deficit kcal</label><input type="number" id="sWkDef" min="0" step="50" inputmode="numeric" placeholder="Auto"><span class="hint num" id="sWkDefHint"></span></div>
+        <div class="field"><label class="label" for="sFinal">Final goal weight kg</label><input type="number" id="sFinal" min="20" step="0.1" inputmode="decimal" placeholder="Optional"></div>
+      </div>
+    </div>
+    <div class="sgroup">
+      <h2>Body</h2>
+      <div class="grid">
+        <div class="field"><label class="label" for="sFt">Height ft</label><input type="number" id="sFt" min="3" max="7" step="1" inputmode="numeric"></div>
+        <div class="field"><label class="label" for="sIn">Height in</label><input type="number" id="sIn" min="0" max="11.5" step="0.5" inputmode="decimal"></div>
+        <div class="field"><label class="label" for="sBw">Default weight kg</label><input type="number" id="sBw" min="20" step="0.1" inputmode="decimal"><span class="hint">Used until you log a weight</span></div>
+      </div>
+      <p class="note num" id="stepsFormula"></p>
+    </div>
+    <div class="sgroup">
+      <h2>Backup</h2>
+      <p class="note">Copy your backup code and keep it somewhere safe (notes, WhatsApp to yourself). Paste it here on any phone or browser to get all your data back.</p>
+      <div class="row" style="justify-content:flex-start"><button type="button" class="btn" id="bkCopy">Copy backup code</button><span class="note num" id="bkInfo"></span></div>
+      <textarea id="bkText" rows="3" placeholder="Paste a backup code here to restore" style="width:100%;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:8px 10px;font:12px/1.4 monospace;color:var(--ink);resize:vertical"></textarea>
+      <div class="row" style="justify-content:flex-end"><button type="button" class="btn ghost" id="bkRestore">Restore from code</button></div>
+    </div>
+  </section>
+</div>
+
+
+<!-- ================= COACH+ / EXTENDED TRACKING ================= -->
+<div data-view="coach" class="wrap" style="gap:16px" hidden>
+  <section class="card" id="autoCoachCard">
+    <div class="cardhead"><h2>Smart AI-style auto planner</h2><span class="pill ok" id="autoPlanStatus">Auto calculations on</span></div>
+    <div class="status idle" id="autoPlanSummary">Enter your real weight, height and activity in Setup / Settings. The planner will calculate a safe starting plan.</div>
+    <div class="kpis num">
+      <div class="kpi"><span class="label">Estimated maintenance</span><b id="autoMaint">—</b><span class="hint">kcal / day</span></div>
+      <div class="kpi"><span class="label">Suggested intake</span><b id="autoIntake">—</b><span class="hint">kcal / day</span></div>
+      <div class="kpi"><span class="label">Protein goal</span><b id="autoProtein">—</b><span class="hint">g / day</span></div>
+      <div class="kpi"><span class="label">Walking target</span><b id="autoSteps">—</b><span class="hint">steps / day</span></div>
+    </div>
+    <div class="row">
+      <button type="button" class="btn" id="applyAutoPlan">Apply suggested plan</button>
+      <button type="button" class="btn ghost" id="recalcAutoPlan">Recalculate</button>
+    </div>
+    <p class="note">This is a transparent, offline calculation engine—not a connected generative AI model. It recalculates recommendations from your saved logs. Applying a plan changes your existing daily targets.</p>
+  </section>
+  <section class="card">
+    <div class="cardhead"><h2>Personal coach</h2><span class="pill idle" id="coachStatus">Based on your logs</span></div>
+    <div id="coachAdvice" class="status idle">Log a few days to unlock useful trend-based feedback.</div>
+    <div class="kpis num">
+      <div class="kpi"><span class="label">Consistency</span><b id="consistencyScore">—</b><span class="hint">out of 100</span></div>
+      <div class="kpi"><span class="label">Current streak</span><b id="streakScore">0</b><span class="hint">tracked days</span></div>
+      <div class="kpi"><span class="label">Water</span><b id="waterSummary">0 L</b><span class="hint">today</span></div>
+      <div class="kpi"><span class="label">Sleep</span><b id="sleepSummary">—</b><span class="hint">hours today</span></div>
+    </div>
+    <p class="note">Coach insights are generated locally from your entries; this file does not call an external AI service.</p>
+  </section>
+
+  <section class="card">
+    <div class="cardhead"><h2>Indian food & nutrition</h2><span class="note">Approximate values · serving sizes vary</span></div>
+    <div class="grid">
+      <div class="field"><label class="label" for="foodSearch">Find a food</label><input id="foodSearch" type="search" placeholder="e.g. paneer, roti, poha"></div>
+      <div class="field"><label class="label" for="foodQty">Servings</label><input id="foodQty" type="number" min="0.25" max="10" step="0.25" value="1"></div>
+    </div>
+    <div id="foodResults" class="rows"></div>
+    <div class="status idle" id="foodTotals">Food log additions today: 0 kcal · 0 g protein</div>
+    <p class="note">Values are estimates for common portions, not laboratory measurements. Cooking oil, recipe and portion size can change calories substantially.</p>
+  </section>
+
+  <section class="card">
+    <div class="cardhead"><h2>Body transformation</h2><span class="note">Measurements are optional</span></div>
+    <div class="grid">
+      <div class="field"><label class="label" for="waistInput">Waist (cm)</label><input type="number" id="waistInput" min="30" max="250" step="0.1" placeholder="—"></div>
+      <div class="field"><label class="label" for="chestInput">Chest (cm)</label><input type="number" id="chestInput" min="30" max="250" step="0.1" placeholder="—"></div>
+      <div class="field"><label class="label" for="hipInput">Hip (cm)</label><input type="number" id="hipInput" min="30" max="250" step="0.1" placeholder="—"></div>
+    </div>
+    <div class="row"><button type="button" class="btn" id="saveMeasures">Save today's measurements</button><span class="note" id="measureStatus">Saved on this device</span></div>
+    <div class="kpis num">
+      <div class="kpi"><span class="label">Waist change</span><b id="waistChange">—</b></div>
+      <div class="kpi"><span class="label">Chest change</span><b id="chestChange">—</b></div>
+      <div class="kpi"><span class="label">Hip change</span><b id="hipChange">—</b></div>
+      <div class="kpi"><span class="label">Weight change</span><b id="bodyWeightChange">—</b></div>
+    </div>
+    <p class="note">Take progress photos separately and store them somewhere private. This tracker does not upload or store photos.</p>
+  </section>
+
+  <section class="card">
+    <div class="cardhead"><h2>Daily lifestyle</h2><span class="note">Saved automatically</span></div>
+    <div class="grid">
+      <div class="field"><label class="label" for="sleepInput">Sleep (hours)</label><input type="number" id="sleepInput" min="0" max="24" step="0.25" placeholder="7.5"></div>
+      <div class="field"><label class="label" for="waterInput">Water (litres)</label><input type="number" id="waterInput" min="0" max="15" step="0.25" placeholder="2.5"></div>
+      <div class="field"><label class="label" for="smokeInput">Cigarettes today</label><input type="number" id="smokeInput" min="0" max="100" step="1" placeholder="0"></div>
+    </div>
+    <div class="row"><button type="button" class="btn" id="saveLifestyle">Save lifestyle log</button><span class="note" id="lifestyleStatus">No entry yet</span></div>
+    <div id="lifestyleFeedback" class="status idle">Track honestly; the app will show trends, not judge individual days.</div>
+  </section>
+
+  <section class="card">
+    <div class="cardhead"><h2>Plateau detector</h2><span class="pill idle" id="plateauBadge">Need more data</span></div>
+    <div id="plateauText" class="status idle">Log at least 14 days of weights to check the trend.</div>
+    <p class="note">Uses the change between early and recent 7-day averages. Water retention, sodium, digestion and menstrual cycles can mask fat loss; this is a screening signal, not a diagnosis.</p>
+  </section>
+
+  <section class="card">
+    <div class="cardhead"><h2>Progress prediction & what-if</h2></div>
+    <div class="grid">
+      <div class="field"><label class="label" for="simCalories">Calories / day</label><input type="number" id="simCalories" min="800" max="5000" step="25"></div>
+      <div class="field"><label class="label" for="simSteps">Steps / day</label><input type="number" id="simSteps" min="0" max="40000" step="500"></div>
+      <div class="field"><label class="label" for="simDays">Days to simulate</label><input type="number" id="simDays" min="7" max="365" step="7" value="30"></div>
+    </div>
+    <div id="simResult" class="status idle">Enter a scenario to estimate the trend.</div>
+    <p class="note">A mathematical estimate based on your configured maintenance and walking estimate. Real scale weight is nonlinear and will differ.</p>
+  </section>
+
+  <section class="card">
+    <div class="cardhead"><h2>Budget meal & grocery planner</h2><span class="note">Illustrative Indian prices</span></div>
+    <div class="grid">
+      <div class="field"><label class="label" for="groceryBudget">Weekly budget (₹)</label><input type="number" id="groceryBudget" min="100" max="20000" step="50" value="900"></div>
+      <div class="field"><label class="label" for="mealDays">Days</label><input type="number" id="mealDays" min="1" max="7" step="1" value="7"></div>
+    </div>
+    <div id="mealPlan" class="rows"></div>
+    <div class="row"><button type="button" class="btn" id="makeGrocery">Build grocery list</button><span class="note" id="groceryCost">Estimated cost: —</span></div>
+    <div id="groceryList" class="status idle">Choose a budget and generate a list.</div>
+    <p class="note">Prices vary by city, shop and season. This is a planning estimate, not a live price quote. Adjust quantities to appetite and household needs.</p>
+  </section>
+
+  <section class="card">
+    <div class="cardhead"><h2>Achievements</h2><span class="note">Unlocked from logged data</span></div>
+    <div id="achievementList" class="rows"></div>
+  </section>
+
+  <section class="card">
+    <div class="cardhead"><h2>Safety checks</h2><span class="pill ok">Always on</span></div>
+    <div id="safetyPanel" class="status idle">Safety checks use your configured targets and current entries.</div>
+    <p class="note">This is not medical care. Avoid aggressive calorie cuts or compensatory exercise. If you have a medical condition, take medication affecting weight/appetite, or develop dizziness, fainting, persistent weakness or disordered eating symptoms, get advice from a qualified clinician.</p>
+  </section>
+</div>
+
+</div>
+<div class="toast" id="toast" role="status"></div>
+<div class="tip num" id="tip" hidden></div>
+
+<script>
+(function(){
+const DEFAULT_SETTINGS = {v:2, maintMode:"auto", maintenance:2000, targetIntake:1700, proteinGoal:130, weeklyGoal:-0.3, finalGoal:null, heightFt:5, heightIn:6, bodyWeight:65, planSteps:8000, planWork:0, basis:"habits"};
+const KCAL_PER_KG = 7700;
+const $ = id => document.getElementById(id);
+const fmt = n => Math.round(n).toLocaleString("en-IN");
+const sgn = n => (n>0?"+":n<0?"−":"") + Math.abs(n).toFixed(2);
+const keyOf = d => d.toLocaleDateString("en-CA");
+const parseKey = k => { const [y,m,d]=k.split("-").map(Number); return new Date(y,m-1,d); };
+const todayKey = () => keyOf(new Date());
+const shiftKey = (k,n) => { const d=parseKey(k); d.setDate(d.getDate()+n); return keyOf(d); };
+// Start of the 7-day block containing k. Uses your chosen start date if set, else Monday.
+const mondayOf = k => {
+  const a = state && state.settings && state.settings.weekAnchor;
+  if(a){ const diff=Math.round((parseKey(k)-parseKey(a))/864e5); return shiftKey(a, Math.floor(diff/7)*7); }
+  const d=parseKey(k); d.setDate(d.getDate()-((d.getDay()+6)%7)); return keyOf(d);
+};
+const dayOfWeek = k => Math.round((parseKey(k)-parseKey(mondayOf(k)))/864e5)+1;   // 1..7
+const daysLeftInWeek = () => 8 - dayOfWeek(todayKey());                              // incl. today
+const shortDate = k => parseKey(k).toLocaleDateString("en-IN",{day:"numeric",month:"short"});
+const dayName = k => parseKey(k).toLocaleDateString("en-IN",{weekday:"short"});
+const prettyKey = k => k===todayKey() ? "Today" : k===shiftKey(todayKey(),-1) ? "Yesterday" : parseKey(k).toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"short"});
+const plural = (n,w) => `${n} ${w}${n===1?"":"s"}`;
+
+const state = { current: todayKey(), days:{}, settings:{...DEFAULT_SETTINGS}, tab:"today" };
+let db = null;
+
+function lsGet(k,f){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):f; }catch(e){ return f; } }
+// Claude chat artifacts offer window.storage (saved to the viewer's Claude account); use it when there's no cloud db
+const WS = (typeof window!=="undefined" && window.storage && typeof window.storage.get==="function" && typeof window.storage.set==="function") ? window.storage : null;
+let wsReady=false; const wsTimers={};
+function lsSet(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){}
+  if(WS && wsReady && !db){ clearTimeout(wsTimers[k]); wsTimers[k]=setTimeout(()=>{ try{ Promise.resolve(WS.set(k, JSON.stringify(v))).catch(()=>{}); }catch(e){} },300); } }
+function normSettings(s){
+  s = {...DEFAULT_SETTINGS, ...(s||{})};
+  const c = s.catchup||{};            // migrate older fields
+  if(s.planSteps==null && c.planSteps!=null) s.planSteps=c.planSteps;
+  if(s.planWork==null && c.planWork!=null) s.planWork=c.planWork;
+  if(c.basis==="target" && !s._basisMigrated){ s.basis="target"; }
+  s._basisMigrated = true;
+  if(!s._bfMigrated){ s.basis="bf"; s._bfMigrated=true; }
+  if(s.planSteps==null) s.planSteps=10000; if(s.planWork==null) s.planWork=0;
+  return s;
+}
+const num = (v, d=null) => v===null || v===undefined || v==="" ? d : +v;
+function normDay(k,d){ d=d||{}; return {date:k, entries:d.entries||[], workout:+(d.workout ?? d.extraBurn ?? 0)||0, steps:+d.steps||0, stepsKcal:+d.stepsKcal||0, weight:num(d.weight), eaten:num(d.eaten), protein:num(d.protein), extra:d.extra||{}}; }
+state.days = lsGet("dl_days2", {});
+for(const k of Object.keys(state.days)) state.days[k]=normDay(k,state.days[k]);
+state.settings = normSettings(lsGet("dl_settings2", null));
+state.tab = lsGet("dl_tab","today"); if(!["today","week","plan","settings","coach"].includes(state.tab)) state.tab="today";
+
+// ---------- saving ----------
+const queues = {};
+function enqueue(path, fn){
+  const next = (queues[path]||Promise.resolve()).then(fn).catch(e=>{ console.warn(e); toast(e && e.code==="quota_exceeded" ? "Storage is full. Delete some old days." : "Couldn’t save. Please try again."); });
+  queues[path]=next; return next;
+}
+function getDay(k){ if(!state.days[k]) state.days[k]=normDay(k); return state.days[k]; }
+function saveDay(k){ lsSet("dl_days2", state.days); if(db) enqueue("days/"+k, ()=>db.doc("days/"+k).set(JSON.parse(JSON.stringify(getDay(k))))); }
+const dayTimers={};
+function saveDaySoon(k){ lsSet("dl_days2", state.days); clearTimeout(dayTimers[k]); dayTimers[k]=setTimeout(()=>{ delete dayTimers[k]; saveDay(k); },600); }
+function flushSaves(){ lsSet("dl_days2", state.days); lsSet("dl_settings2", state.settings); for(const k of Object.keys(dayTimers)){ clearTimeout(dayTimers[k]); delete dayTimers[k]; saveDay(k); } }
+addEventListener("pagehide", flushSaves); document.addEventListener("visibilitychange", ()=>{ if(document.hidden) flushSaves(); });
+let setT;
+function saveSettings(){ lsSet("dl_settings2", state.settings); clearTimeout(setT); setT=setTimeout(()=>{ if(db) enqueue("settings/main", ()=>db.doc("settings/main").set(JSON.parse(JSON.stringify(state.settings)))); },500); }
+
+// ---------- core maths ----------
+function latestWeightOnOrBefore(k){ let best=null; for(const [dk,d] of Object.entries(state.days)) if(d.weight!=null && dk<=k && (!best||dk>best.k)) best={k:dk,w:+d.weight}; return best; }
+const currentWeight = () => latestWeightOnOrBefore(todayKey());
+const MAINT_FACTOR = 31;   // maintenance kcal = bodyweight kg × 31
+// Maintenance for a given day: auto = latest logged weight on/before that day × 31, or the manual value
+function maintFor(k){
+  const s=state.settings; if(s.maintMode==="manual") return +s.maintenance||0;
+  const w=latestWeightOnOrBefore(k||todayKey()); const W = w ? w.w : ((s.bf&&+s.bf.weight) || +s.bodyWeight || 60);
+  return Math.round(W*MAINT_FACTOR);
+}
+function stepsParams(k){ const s=state.settings, cw=latestWeightOnOrBefore(k||todayKey()); const hCm=((+s.heightFt||0)*12+(+s.heightIn||0))*2.54; return {hCm, w: cw?cw.w:(+s.bodyWeight||60), stride:hCm*0.414/100}; }
+// Standard walking formula: stride = height × 0.414, ~5 km/h walk (MET 3.5), kcal/min = MET × 3.5 × kg ÷ 200
+function kcalPerStep(k){ const p=stepsParams(k); const minPerStep = p.stride/1000/5*60; return 3.5*3.5*p.w/200*minPerStep; }
+const stepsKcal = (steps,k) => Math.round(steps*kcalPerStep(k));
+const stepsFor = kcal => Math.max(0, Math.ceil(kcal/kcalPerStep()/100)*100);
+
+function totals(k){
+  const d=state.days[k]||normDay(k), s=state.settings;
+  const eaten = d.eaten!=null ? d.eaten : d.entries.reduce((a,e)=>a+(+e.kcal||0),0);
+  const protein = d.protein!=null ? d.protein : d.entries.reduce((a,e)=>a+(+e.protein||0),0);
+  const sk = d.steps>0 ? stepsKcal(d.steps,k) : (+d.stepsKcal||0);   // always from that day's weight
+  const act=(+d.workout||0)+sk, dietDef=maintFor(k)-eaten;
+  const logged = d.eaten!=null || d.entries.length>0;
+  return {eaten, protein, act, workout:+d.workout||0, stepsKcal:sk, steps:+d.steps||0, dietDef, total:(logged?dietDef:0)+act, logged, hasAct:act>0};
+}
+function weekInfo(){
+  const today=todayKey(), mon=mondayOf(today), sun=shiftKey(mon,6);
+  // weekly weight goal follows the active plan: planned weekly deficit ÷ 7,700 (Weight target basis uses its own setting)
+  const goal = state.settings.basis==="target" ? (+state.settings.weeklyGoal||0) : -Math.max(0,plan().weekly)/KCAL_PER_KG;
+  let start=null; const md=state.days[mon];
+  if(md && md.weight!=null) start={k:mon,w:+md.weight};
+  if(!start) start=latestWeightOnOrBefore(shiftKey(mon,-1));
+  if(!start) for(let i=0;i<7;i++){ const kk=shiftKey(mon,i), dd=state.days[kk]; if(dd && dd.weight!=null){ start={k:kk,w:+dd.weight}; break; } }
+  const ov=(state.settings.weekTargets||{})[mon], auto=start?start.w+goal:null;
+  return {mon, sun, goal, start, now:currentWeight(), auto, target: ov!=null?+ov:auto};
+}
+// The daily deficit the user is aiming for
+function plan(){
+  const s=state.settings, maint=maintFor(), cal=+s.targetIntake||0;
+  if(s.basis==="bf"){ const b=bfInfo(); if(b) return {daily:b.daily, weekly:b.daily*7, src:`${b.rate.toFixed(2)}%/week at ~${b.bf.toFixed(1)}% body fat`}; }
+  if(s.basis==="target"){
+    let wk, src;
+    if(+s.weeklyDeficit>0){ wk=+s.weeklyDeficit; src="weekly deficit setting"; }
+    else { const w=weekInfo(); if(w.start && w.target!=null && w.start.w>w.target){ wk=(w.start.w-w.target)*KCAL_PER_KG; src=`week target ${w.target.toFixed(2)} kg`; } else { wk=(maint-cal)*7; src="target calories"; } }
+    return {daily:wk/7, weekly:wk, src};
+  }
+  const daily=(maint-cal)+stepsKcal(+s.planSteps||0)+(+s.planWork||0);
+  return {daily, weekly:daily*7, src:`${fmt(cal)} kcal · ${fmt(+s.planSteps||0)} steps${+s.planWork?` · ${fmt(s.planWork)} kcal workout`:""}`};
+}
+function weekProgress(){
+  const today=todayKey(), mon=mondayOf(today); let done=0, tracked=0;
+  for(let k=mon;k<=today;k=shiftKey(k,1)){ const t=totals(k); if(t.logged||t.hasAct){ tracked++; done+=t.total; } }
+  const p=plan(), expected=p.daily*tracked, gap=expected-done, daysAfter=7-dayOfWeek(today);
+  return {done, tracked, expected, gap, daysAfter, plan:p};
+}
+
+// ---------- render: shared ----------
+function setIf(id,v){ const el=$(id); if(document.activeElement!==el) el.value = v==null ? "" : v; }
+function needsSetup(){ const s=state.settings; return !s.setupDone && !(s.bf && +s.bf.pct>0); }
+function render(){
+  if(needsSetup() && state.tab!=="setup"){ state.tab="setup"; openWizard(true); return; }
+  document.querySelector(".tabs").hidden = state.tab==="setup";
+  if(state.tab==="setup"){ document.querySelectorAll("[data-view]").forEach(v=>v.hidden = v.dataset.view!=="setup"); renderWizard(); return; }
+  document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on", b.dataset.tab===state.tab));
+  document.querySelectorAll("[data-view]").forEach(v=>v.hidden = v.dataset.view!==state.tab);
+  if(state.tab==="today") renderToday();
+  if(state.tab==="week") renderWeekView();
+  if(state.tab==="plan") renderPlanner();
+  if(state.tab==="settings") renderSettings();
+  if(state.tab==="coach") renderCoach();
+}
+
+// ---------- TODAY ----------
+function renderToday(){
+  const k=state.current, isToday=k===todayKey(), t=totals(k), s=state.settings, d=state.days[k]||normDay(k);
+  const maint=maintFor(k), tgt=+s.targetIntake||0;
+  $("dateLabel").textContent=prettyKey(k); $("nextDay").disabled=isToday; $("goToday").hidden=isToday;
+  $("inTitle").textContent = isToday ? "Log today" : "Log · "+prettyKey(k);
+  if(!resetArm) $("resetBtn").textContent = isToday ? "Reset day" : "Reset this day";
+  setIf("eKcal", d.eaten!=null ? d.eaten : (d.entries.length ? t.eaten : null));
+  setIf("aSteps", d.steps||null); setIf("aWorkout", d.workout||null); setIf("wInput", d.weight); setIf("eProt", d.protein);
+  $("stepsKcalHint").textContent = `≈ ${fmt(t.stepsKcal)} kcal at ${stepsParams(k).w} kg`;
+  { const bi=bfOn(k); $("bfHint").textContent = bi ? `Body fat ≈ ${bi.bf.toFixed(1)}% · goal ${bi.goal}%` : ""; }
+
+  $("heroLabel").textContent = "Total deficit · "+(isToday?"today":prettyKey(k));
+  const big=$("totalBig"); big.firstChild.nodeValue=(t.total<0?"+":"")+fmt(Math.abs(t.total)); big.lastChild.textContent = t.total<0?"kcal surplus":"kcal";
+  const pill=$("statusPill"); let cls="idle", txt="No entries yet";
+  if(t.logged){
+    if(t.total<0){ cls="bad"; txt="In a surplus"; }
+    else if(t.eaten>tgt){ cls="warn"; txt=`${fmt(t.eaten-tgt)} kcal over target`; }
+    else { cls="ok"; txt="On track"; }
+  }
+  pill.className="pill "+cls; pill.textContent=txt;
+  $("dietDef").textContent = t.logged ? (t.dietDef<0?"+":"")+fmt(Math.abs(t.dietDef)) : "—";
+  $("dietSub").textContent = t.logged ? `${fmt(maint)} − ${fmt(t.eaten)} eaten` : "Add calories eaten";
+  $("actDef").textContent = fmt(t.act);
+  $("actSub").textContent = `Steps ${fmt(t.stepsKcal)} · Workout ${fmt(t.workout)}`;
+  const max=Math.max(maint,t.eaten,1), fill=$("gaugeFill");
+  fill.style.width=Math.min(100,t.eaten/max*100)+"%"; fill.className="fill"+(t.eaten>maint?" bad":t.eaten>tgt?" warn":"");
+  $("gaugeMark").style.left=`calc(${Math.min(100,tgt/max*100)}% - 1px)`;
+  $("stEaten").textContent=fmt(t.eaten);
+  const left=tgt-t.eaten; $("stLeft").textContent = left>=0?fmt(left):"−"+fmt(-left); $("stLeft").style.color = left<0?"var(--bad)":"";
+  $("stTarget").textContent=fmt(tgt);
+  const pg=+s.proteinGoal||1; $("protText").textContent=`${Math.round(t.protein)} / ${pg} g`; $("protFill").style.width=Math.min(100,t.protein/pg*100)+"%";
+  renderTomorrow();
+}
+
+function renderTomorrow(){
+  const s=state.settings, maint=maintFor(), wp=weekProgress(), spread=!!s.tmSpread, today=todayKey();
+  const tt=totals(today), todayDone = tt.logged || tt.hasAct;
+  const word = todayDone ? "tomorrow" : "today";
+  const left = wp.daysAfter + (todayDone ? 0 : 1);           // days still to plan in this 7-day block
+  $("tmOne").textContent = todayDone ? "Tomorrow" : "Today"; $("tmSpread").textContent = "Rest of the 7 days";
+  $("tmOne").classList.toggle("on",!spread); $("tmSpread").classList.toggle("on",spread);
+  const st=$("tmStatus"), daily=wp.plan.daily;
+  if(left===0){ $("tmAsk").hidden=true; $("tmTitle").textContent="Plan for tomorrow"; st.className="status idle"; st.innerHTML=`Today was day 7. Tomorrow a fresh 7 days starts with a target of <b>${fmt(daily)} kcal</b> deficit a day.`; return; }
+  const share = wp.tracked ? (spread ? wp.gap/left : wp.gap) : 0;
+  const need = Math.max(0, daily + share);                  // deficit needed per day
+  $("tmTitle").textContent = spread ? `Plan for the next ${plural(left,"day")}` : `Plan for ${word}`;
+  // plain 3-line explanation
+  const line=(n,t,v,c="")=>`<div class="tr" style="display:flex;justify-content:space-between;gap:12px;padding:3px 0"><span>${n}. ${t}</span><b class="num" style="${c}">${v}</b></div>`;
+  let h = line(1,"Your daily target deficit",`${fmt(daily)} kcal`);
+  if(wp.tracked){
+    h += line(2,`Done so far (${plural(wp.tracked,"day")}) vs plan`,`${fmt(wp.done)} / ${fmt(wp.expected)}`);
+    h += line(3, wp.gap>0?`You’re behind by`:`You’re ahead by`, `${fmt(Math.abs(wp.gap))} kcal`, wp.gap>0?"color:var(--bad)":"color:var(--diet)");
+    h += `<div style="border-top:1px solid var(--line);margin-top:6px;padding-top:6px;display:flex;justify-content:space-between;gap:12px"><span>So ${spread?`each of the next ${plural(left,"day")}`:word} you need</span><b class="num">${fmt(need)} kcal deficit</b></div>`;
+  } else h += `<div style="padding-top:4px">Nothing logged yet this week, so ${word} you just need your normal <b>${fmt(daily)} kcal</b> deficit.</div>`;
+  st.className="status "+(wp.tracked?(wp.gap>0?"bad":"ok"):"idle"); st.innerHTML=h;
+  $("tmAsk").hidden=false;
+  const work = +s.planWork||0;
+  setIf("tmSteps", s.tmSteps!=null ? s.tmSteps : (+s.planSteps||0));
+  setIf("tmCal", s.tmCal!=null ? s.tmCal : (+s.targetIntake||0));
+  const steps=+$("tmSteps").value||0, cal=+$("tmCal").value||0;
+  const canEat = maint - (need - stepsKcal(steps) - work);
+  const walk = stepsFor(need - (maint-cal) - work);
+  $("tmCalOut").textContent = fmt(Math.max(0,canEat))+" kcal";
+  $("tmCalOut").style.color = canEat<1300 ? "var(--bad)" : "";
+  $("tmStepsOut").textContent = walk>0 ? fmt(walk)+" steps" : "No extra steps";
+  $("tmStepsOut").style.color = walk>20000 ? "var(--warn)" : "";
+  const tgt=+s.targetIntake||0;
+  $("tmNote").textContent = `How it works: maintenance ${fmt(maint)} kcal − what you eat = diet deficit, plus steps and ${work?`your ${fmt(work)} kcal workout`:"workout"}. Together they must reach ${fmt(need)} kcal.`
+    + (canEat>tgt+50 ? ` Being ahead lets you eat up to ${fmt(canEat)}; sticking to ${fmt(tgt)} keeps you ahead.` : "")
+    + (walk>20000 ? " That many steps is hard in one day, so try “Rest of the 7 days”." : "")
+    + (canEat<1300 ? " Very low calories: walk more or spread it over the 7 days." : "");
+}
+
+// ---------- WEEK ----------
+const TIPS={};
+function renderWeekView(){
+  const today=todayKey(), mon=mondayOf(today), sun=shiftKey(mon,6);
+  $("weekRange").textContent=`${shortDate(mon)} – ${shortDate(sun)} · ${plural(daysLeftInWeek(),"day")} left`; $("weekDay").textContent=`Day ${dayOfWeek(today)} of 7`;
+  let diet=0, act=0; for(let k=mon;k<=sun;k=shiftKey(k,1)){ const t=totals(k); if(t.logged) diet+=t.dietDef; act+=t.act; }
+  const total=diet+act;
+  { const pw=plan(), wk=Math.max(0,pw.weekly), s=state.settings;
+    const of=(v,t)=>`${fmt(v)}<small style="font-size:14px;color:var(--muted);font-weight:500"> / ${fmt(t)}</small>`;
+    $("wkTotal").innerHTML=of(total,wk);
+    if(s.basis==="habits"){ const dT=(maintFor()-(+s.targetIntake||0))*7, aT=(stepsKcal(+s.planSteps||0)+(+s.planWork||0))*7; $("wkDiet").innerHTML=of(diet,dT); $("wkAct").innerHTML=of(act,aT); }
+    else { $("wkDiet").textContent=fmt(diet); $("wkAct").textContent=fmt(act); }
+    $("wkFat").innerHTML=`${(total/KCAL_PER_KG).toFixed(2)}<small style="font-size:14px;color:var(--muted);font-weight:500"> / ${(wk/KCAL_PER_KG).toFixed(2)} kg</small>`;
+    $("wkTotLabel").textContent = `Total · ${Math.round(wk?total/wk*100:0)}% done`; }
+  const wp=weekProgress(), wi=weekInfo(), p=wp.plan;
+  const targetKg=Math.max(0,p.weekly)/KCAL_PER_KG, soFarKg=wp.done/KCAL_PER_KG, expKg=wp.expected/KCAL_PER_KG;
+  const avg = wp.tracked ? wp.done/wp.tracked : p.daily;
+  const projDef = wp.done + avg*(7-wp.tracked), projKg=projDef/KCAL_PER_KG;
+  const v=$("wkVerdict");
+  if(!wp.tracked){ v.className="status idle"; v.innerHTML=`Your target this week: <b>${fmt(p.weekly)} kcal</b> deficit = about <b>${targetKg.toFixed(2)} kg</b> of fat. Log today to start tracking.`; }
+  else { const pct = wp.expected>0 ? wp.done/wp.expected : 1;
+    v.className="status "+(pct>=0.9?"ok":"bad");
+    v.innerHTML = (pct>=1.05?`<b>Ahead of plan</b> by ${fmt(-wp.gap)} kcal.`:pct>=0.9?`<b>On track.</b>`:`<b>Behind plan</b> by ${fmt(wp.gap)} kcal.`)
+      + ` At this pace you’ll finish the week at about <b>${projKg.toFixed(2)} kg</b> of fat lost${wi.start?`, around <b>${(wi.start.w-projKg).toFixed(2)} kg</b>`:""} (target ${targetKg.toFixed(2)} kg).`; }
+  const cell=(main,sub="")=>`<div><b>${main}</b>${sub?`<small>${sub}</small>`:""}</div>`;
+  $("wkCmp").innerHTML = `<div class="h"></div><div class="h">Week target</div><div class="h">Now</div>`
+    + `<div class="k">Deficit</div>` + cell(`${fmt(p.weekly)} kcal`,`${fmt(p.daily)}/day`) + cell(`${fmt(wp.done)} kcal`, wp.tracked?`plan by now ${fmt(wp.expected)}`:"nothing logged")
+    + `<div class="k">Fat loss</div>` + cell(`${targetKg.toFixed(2)} kg`) + cell(`${soFarKg.toFixed(2)} kg`, wp.tracked?`plan by now ${expKg.toFixed(2)}`:"")
+    + `<div class="k">Weight</div>` + cell(wi.target!=null?`${wi.target.toFixed(2)} kg`:"—", wi.start?`from ${wi.start.w.toFixed(2)}`:"") + cell(wi.now?`${wi.now.w.toFixed(2)} kg`:"—", wi.now&&wi.target!=null?(wi.now.w<=wi.target?"target reached":`${(wi.now.w-wi.target).toFixed(2)} kg to go`):"");
+  $("wkPlanSrc").textContent = `Target comes from your current plan: ${p.src}. Apply a new plan in the Planner and this updates automatically. Weight moves with water too, so trust the deficit more day to day.`;
+  renderDeficitChart(); renderWeight();
+}
+function renderDeficitChart(){
+  const el=$("chart"), W=Math.max(300,Math.min(700,el.clientWidth||640)), H=230, padL=44, padR=10, padT=24, padB=34;
+  const today=todayKey(), rows=[]; for(let i=6;i>=0;i--){ const k=shiftKey(today,-i); rows.push({k,...totals(k)}); }
+  const p=plan(), target=p.daily;
+  const tops=rows.map(r=>Math.max(0,r.logged?r.dietDef:0)+r.act), bots=rows.map(r=>r.logged?Math.min(0,r.dietDef):0);
+  let mx=Math.max(target,...tops,100); mx=Math.ceil(mx/250)*250; let mn=Math.min(0,...bots); mn=mn<0?-Math.ceil(-mn/250)*250:0;
+  const y=v=>padT+(mx-v)/(mx-mn)*(H-padT-padB), bw=(W-padL-padR)/7;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Deficit over the last 7 days">`;
+  for(let i=0;i<=4;i++){ const v=Math.round(mn+(mx-mn)*i/4); s+=`<line x1="${padL}" x2="${W-padR}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${padL-6}" y="${y(v)+4}" text-anchor="end" font-size="11" fill="var(--muted)" font-family="Manrope">${fmt(v)}</text>`; }
+  if(target>0) s+=`<line x1="${padL}" x2="${W-padR}" y1="${y(target)}" y2="${y(target)}" stroke="var(--diet)" stroke-width="1.5" stroke-dasharray="5 4"/><text x="${padL+4}" y="${y(target)-5}" text-anchor="start" font-size="11" fill="var(--diet)" font-family="Manrope" font-weight="600">plan ${fmt(target)}/day</text>`;
+  TIPS.d=[];
+  rows.forEach((r,i)=>{
+    const cx=padL+bw*i+bw/2, bx=cx-bw*0.3, w=bw*0.6, dd=r.logged?r.dietDef:0, base=Math.max(0,dd), tot=dd+r.act;
+    TIPS.d[i]=`<b>${prettyKey(r.k)}</b>`+(r.logged||r.hasAct?`<div class="tr"><span><i style="background:var(--diet)"></i>Diet</span><span>${r.logged?(dd<0?"+"+fmt(-dd)+" surplus":fmt(dd)):"not logged"}</span></div><div class="tr"><span><i style="background:var(--act)"></i>Steps (${fmt(r.steps)})</span><span>${fmt(r.stepsKcal)}</span></div><div class="tr"><span><i style="background:var(--act)"></i>Workout</span><span>${fmt(r.workout)}</span></div><div class="tr" style="border-top:1px solid rgba(127,127,127,.4);margin-top:3px;padding-top:3px"><span>Total deficit</span><span>${fmt(tot)}</span></div><div class="tr"><span>Eaten</span><span>${r.logged?fmt(r.eaten):"—"}</span></div>`:`<div>No data</div>`);
+    s+=`<g class="hit" data-tip="d:${i}"><rect class="bgh" x="${padL+bw*i+2}" y="${padT-6}" width="${bw-4}" height="${H-padT-padB+6}" rx="6" fill="transparent"/></g>`;
+    s+=`<text pointer-events="none" x="${cx}" y="${H-12}" text-anchor="middle" font-size="12" fill="${r.k===today?"var(--ink)":"var(--muted)"}" font-weight="${r.k===today?700:500}" font-family="Manrope">${r.k===today?"Today":dayName(r.k)}</text>`;
+    if(!r.logged && !r.hasAct){ s+=`<text pointer-events="none" x="${cx}" y="${y(0)-6}" text-anchor="middle" font-size="12" fill="var(--muted)" font-family="Manrope">—</text>`; return; }
+    if(dd>0) s+=`<rect pointer-events="none" x="${bx}" y="${y(dd)}" width="${w}" height="${y(0)-y(dd)}" fill="var(--diet)"/>`;
+    if(dd<0) s+=`<rect pointer-events="none" x="${bx}" y="${y(0)}" width="${w}" height="${y(dd)-y(0)}" fill="var(--bad)"/>`;
+    if(r.act>0) s+=`<rect pointer-events="none" x="${bx}" y="${y(base+r.act)}" width="${w}" height="${y(base)-y(base+r.act)}" fill="var(--act)"/>`;
+    s+=`<text pointer-events="none" x="${cx}" y="${y(base+r.act)-5}" text-anchor="middle" font-size="12" font-weight="700" fill="var(--ink)" font-family="Manrope">${tot<0?"+":""}${fmt(Math.abs(tot))}</text>`;
+  });
+  el.innerHTML=s+`<line x1="${padL}" x2="${W-padR}" y1="${y(0)}" y2="${y(0)}" stroke="var(--muted)"/></svg>`;
+}
+function renderWeight(){
+  const w=weekInfo(), box=$("remainBox"), daysLeft=Math.round((parseKey(w.sun)-parseKey(todayKey()))/864e5);
+  if(!w.start || w.target==null){
+    box.className="remain"; $("remainVal").textContent="—"; $("remainNote").textContent="Log your bodyweight on the Today tab to see this week’s target.";
+    ["wStart","wTarget","wNow","wChange"].forEach(id=>$(id).textContent="—"); $("wStartFrom").textContent=""; $("wProg").style.width="0%";
+  } else {
+    $("wStart").textContent=w.start.w.toFixed(2); $("wStartFrom").textContent = w.start.k<w.mon?`from ${shortDate(w.start.k)}`:shortDate(w.start.k);
+    $("wTarget").textContent=w.target.toFixed(2); $("wNow").textContent=w.now?w.now.w.toFixed(2):"—";
+    const change=w.now?w.now.w-w.start.w:0; $("wChange").textContent=sgn(change);
+    const goalDelta=w.target-w.start.w, losing=goalDelta<=0;
+    const remaining = w.now ? (losing ? w.now.w-w.target : w.target-w.now.w) : Math.abs(goalDelta);
+    $("wProg").style.width = (goalDelta!==0 ? Math.max(0,Math.min(1,change/goalDelta)) : 1)*100+"%";
+    if(remaining<=0.001){ box.className="remain ok"; $("remainLabel").textContent="Weekly target"; $("remainVal").textContent="Reached"; $("remainNote").textContent=`${remaining<-0.001?`${Math.abs(remaining).toFixed(2)} kg beyond your `:"At your "}${w.target.toFixed(2)} kg target. Expect small daily swings from water weight.`; }
+    else { box.className="remain "+(daysLeft<=1?"warn":"ok"); $("remainLabel").textContent="Left to this week’s target"; $("remainVal").textContent=`${remaining.toFixed(2)} kg`; $("remainNote").textContent=`${w.now?w.now.w.toFixed(2):"—"} → ${w.target.toFixed(2)} kg · ${plural(daysLeft,"day")} left in this week`; }
+  }
+  const fg=+state.settings.finalGoal, now=w.now;
+  if(fg && now){ const diff=now.w-fg, rate=Math.abs(+state.settings.weeklyGoal)||0;
+    $("finalGoalNote").textContent = Math.abs(diff)<0.05 ? `Final goal of ${fg} kg reached.` : `${Math.abs(diff).toFixed(1)} kg to your final goal of ${fg} kg`+(rate?` · about ${Math.ceil(Math.abs(diff)/rate)} weeks at ${rate} kg/week`:""); }
+  else $("finalGoalNote").textContent="";
+  renderWeightChart(w);
+}
+function renderWeightChart(wi){
+  const pts=Object.entries(state.days).filter(([k,d])=>d.weight!=null).map(([k,d])=>({k,w:+d.weight})).sort((a,b)=>a.k<b.k?-1:1), el=$("wChart");
+  if(pts.length<2){ el.innerHTML=`<p class="note">${pts.length?"Log one more day to see your trend.":"Log your bodyweight daily to build the trend chart."}</p>`; return; }
+  const W=Math.max(300,Math.min(700,el.clientWidth||640)), H=210, padL=44, padR=14, padT=18, padB=28, last=pts.slice(-60);
+  const t0=parseKey(last[0].k).getTime(), span=Math.max(parseKey(last[last.length-1].k).getTime()-t0,864e5);
+  let lo=Math.min(...last.map(p=>p.w)), hi=Math.max(...last.map(p=>p.w)); if(wi.target!=null){ lo=Math.min(lo,wi.target); hi=Math.max(hi,wi.target); }
+  lo=Math.floor((lo-0.2)*2)/2; hi=Math.ceil((hi+0.2)*2)/2;
+  const x=k=>padL+(parseKey(k).getTime()-t0)/span*(W-padL-padR), y=v=>padT+(hi-v)/(hi-lo)*(H-padT-padB);
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Bodyweight trend">`;
+  for(let i=0;i<=4;i++){ const v=lo+(hi-lo)*i/4; s+=`<line x1="${padL}" x2="${W-padR}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${padL-6}" y="${y(v)+4}" text-anchor="end" font-size="11" fill="var(--muted)" font-family="Manrope">${v.toFixed(1)}</text>`; }
+  if(wi.target!=null) s+=`<line x1="${padL}" x2="${W-padR}" y1="${y(wi.target)}" y2="${y(wi.target)}" stroke="var(--diet)" stroke-dasharray="5 4" stroke-width="1.5"/><text x="${W-padR}" y="${y(wi.target)-5}" text-anchor="end" font-size="11" font-weight="600" fill="var(--diet)" font-family="Manrope">week target ${wi.target.toFixed(2)}</text>`;
+  const path=last.map((p,i)=>`${i?"L":"M"}${x(p.k).toFixed(1)},${y(p.w).toFixed(1)}`).join(" ");
+  s+=`<path d="${path} L${x(last[last.length-1].k).toFixed(1)},${H-padB} L${x(last[0].k).toFixed(1)},${H-padB} Z" fill="var(--wt)" opacity=".08"/><path d="${path}" fill="none" stroke="var(--wt)" stroke-width="2" stroke-linejoin="round"/>`;
+  TIPS.w=[];
+  last.forEach((p,i)=>{ const e=i===last.length-1, pr=last[i-1];
+    const bo=bfOn(p.k); TIPS.w.push(`<b>${prettyKey(p.k)}</b><div class="tr"><span>Weight</span><span>${p.w.toFixed(2)} kg</span></div>`+(bo?`<div class="tr"><span>Body fat ≈</span><span>${bo.bf.toFixed(1)}%</span></div>`:"")+(pr?`<div class="tr"><span>Since last entry</span><span>${sgn(p.w-pr.w)} kg</span></div>`:""));
+    s+=`<g class="hit" data-tip="w:${i}"><circle cx="${x(p.k)}" cy="${y(p.w)}" r="12" fill="transparent"/><circle cx="${x(p.k)}" cy="${y(p.w)}" r="${e?5:3.5}" fill="${e?"var(--wt)":"var(--surface)"}" stroke="var(--wt)" stroke-width="2"/></g>`; });
+  const lp=last[last.length-1];
+  s+=`<text x="${Math.min(x(lp.k),W-padR-4)}" y="${y(lp.w)-10}" text-anchor="end" font-size="12" font-weight="700" fill="var(--ink)" font-family="Manrope">${lp.w} kg</text><text x="${padL}" y="${H-8}" font-size="11" fill="var(--muted)" font-family="Manrope">${shortDate(last[0].k)}</text><text x="${W-padR}" y="${H-8}" text-anchor="end" font-size="11" fill="var(--muted)" font-family="Manrope">${shortDate(lp.k)}</text>`;
+  el.innerHTML=s+"</svg>";
+}
+
+// ---------- PLANNER ----------
+function pl(){ if(!state.settings.planner) state.settings.planner={}; return state.settings.planner; }
+let PLAN_OUT=null;
+function renderPlanner(){
+  PLAN_OUT=null;
+  const P=pl(), s=state.settings, mode=P.mode==="estimate"?"estimate":"target", fix=P.fix==="steps"?"steps":"diet";
+  $("modeTarget").classList.toggle("on",mode==="target"); $("modeEstimate").classList.toggle("on",mode==="estimate");
+  $("fixDiet").classList.toggle("on",fix==="diet"); $("fixSteps").classList.toggle("on",fix==="steps");
+  document.querySelectorAll("#planner [data-mode]").forEach(el=>el.hidden=el.dataset.mode!==mode);
+  // In target mode you enter one of calories/steps; in estimate mode you enter both
+  document.querySelector("#planner [data-cal]").hidden = mode==="target" && fix==="steps";
+  document.querySelector("#planner [data-steps]").hidden = mode==="target" && fix==="diet";
+  const dts=daysLeftInWeek(), cw=currentWeight(), maint=maintFor();
+  const defs={pCur:cw?cw.w:(+s.bodyWeight||60), pDays:dts, pIntake:+s.targetIntake||0, pSteps:+s.planSteps||0, pWorkout:+s.planWork||0};
+  for(const [id,v] of Object.entries(defs)) setIf(id, P[id]!=null?P[id]:v);
+  const curW=+$("pCur").value||defs.pCur;
+  setIf("pGoalW", P.pGoalW!=null?P.pGoalW:(curW+(+s.weeklyGoal||-0.3)).toFixed(1));
+  $("pDaysHint").textContent=`${plural(dts,"day")} left in your 7 days, incl. today`;
+  const cur=+$("pCur").value||0, days=Math.max(1,Math.round(+$("pDays").value||dts)), work=Math.max(0,+$("pWorkout").value||0);
+  const cal=+$("pIntake").value||0, stepsN=+$("pSteps").value||0;
+  const row=(c,t,sub,v)=>`<div class="r"><i style="background:${c}"></i><div class="t">${t}${sub?`<small>${sub}</small>`:""}</div><b class="num">${v}</b></div>`;
+  let h="";
+  if(mode==="target"){
+    const goalW=+$("pGoalW").value||0, loss=cur-goalW;
+    if(loss<=0){ $("plRes").innerHTML=`<div class="flag warn">Set a target weight below your current weight.</div>`; return; }
+    const need=loss*KCAL_PER_KG/days;
+    let diet, sk, st;
+    if(fix==="diet"){ diet=maint-cal; sk=Math.max(0,need-diet-work); st=stepsFor(sk); }
+    else { st=stepsN; sk=stepsKcal(st); diet=need-sk-work; }
+    const eat=maint-diet;
+    PLAN_OUT={cal:Math.round(eat/10)*10, steps:Math.round(st), work, need};
+    h+=`<div class="reshead"><div><div class="label">${fix==="diet"?"Walk every day":"Eat every day"}</div><b class="num">${fix==="diet"?fmt(st)+" steps":fmt(eat)+" kcal"}</b></div><div class="side num">${cur.toFixed(1)} → ${goalW.toFixed(1)} kg in ${plural(days,"day")}<br>needs ${fmt(need)} kcal deficit/day</div></div>`;
+    h+=`<div class="rows">`+row("var(--diet)","Diet",`Eat ${fmt(eat)} kcal`,(diet<0?"+":"")+fmt(Math.abs(diet)))+row("var(--act)","Steps",`${fmt(st)} steps`,fmt(sk))+row("var(--act)","Workout","",fmt(work))+`<div class="r sum"><i></i><div class="t">Deficit per day</div><b class="num">${fmt(need)}</b></div></div>`;
+    const pct=loss/cur*100*7/days;
+    if(pct>1) h+=`<div class="flag bad">That’s about ${pct.toFixed(1)}% of bodyweight per week. Above ~1% you risk losing muscle. A safer weekly pace for you is ${(cur*0.005).toFixed(2)}–${(cur*0.01).toFixed(2)} kg.</div>`;
+    if(st>20000) h+=`<div class="flag warn">${fmt(st)} steps a day is hard to keep up. Eat a little less, add workout calories, or give it more days.</div>`;
+    if(eat<1300) h+=`<div class="flag warn">${fmt(eat)} kcal a day is very low. Walk more or give it more days.</div>`;
+    if(fix==="diet" && need<=(maint-cal)+work) h+=`<div class="flag ok">Your calories${work?" and workout":""} already cover this, so no extra steps are needed.</div>`;
+  } else {
+    const diet=maint-cal, sk=stepsKcal(stepsN), per=diet+sk+work, loss=per*days/KCAL_PER_KG;
+    PLAN_OUT={cal, steps:stepsN, work, need:per};
+    h+=`<div class="reshead"><div><div class="label">Expected change in ${plural(days,"day")}</div><b class="num">${loss>=0?"−":"+"}${Math.abs(loss).toFixed(2)} kg</b></div><div class="side num">End weight ≈ <b style="font-size:20px;color:var(--ink)">${(cur-loss).toFixed(2)} kg</b></div></div>`;
+    h+=`<div class="rows">`+row("var(--diet)","Diet",`${fmt(maint)} − ${fmt(cal)}`,(diet<0?"+":"")+fmt(Math.abs(diet)))+row("var(--act)","Steps",`${fmt(stepsN)} steps`,fmt(sk))+row("var(--act)","Workout","",fmt(work))+`<div class="r sum"><i></i><div class="t">Deficit per day</div><b class="num">${fmt(per)}</b></div></div>`;
+    const pct=loss/cur*100*7/days;
+    if(per<0) h+=`<div class="flag bad">This plan is a surplus, so expect weight gain.</div>`;
+    else if(pct>1) h+=`<div class="flag bad">About ${pct.toFixed(1)}% of bodyweight per week. Above ~1% you risk losing muscle.</div>`;
+    else if(pct>=0.5) h+=`<div class="flag ok">About ${pct.toFixed(1)}% of bodyweight per week, a solid pace for a cut.</div>`;
+    else h+=`<div class="flag warn">About ${pct.toFixed(1)}% of bodyweight per week. Sustainable, but slow.</div>`;
+  }
+  h+=`<p class="note">Uses 7,700 kcal per kg and your step formula. Scale weight also moves with water, so judge by the weekly trend.</p>`;
+  const cs=state.settings, same = PLAN_OUT && cs.basis==="habits" && +cs.targetIntake===PLAN_OUT.cal && +cs.planSteps===PLAN_OUT.steps && +cs.planWork===PLAN_OUT.work;
+  if(PLAN_OUT) h+=`<div class="apply"><div><b>Apply to my log</b><div class="note num">Calories ${fmt(PLAN_OUT.cal)} · Steps ${fmt(PLAN_OUT.steps)} · Workout ${fmt(PLAN_OUT.work)} kcal</div></div><button type="button" class="btn" id="plApply" ${same?"disabled":""}>${same?"Applied":"Apply plan"}</button></div>`;
+  $("plRes").innerHTML=h;
+}
+
+// ---------- SETTINGS ----------
+function renderSettings(){
+  const s=state.settings, w=weekInfo(), p=plan();
+  setIf("sMaint", s.maintMode==="manual" ? s.maintenance : maintFor()); $("mAuto").classList.toggle("on",s.maintMode!=="manual"); $("mManual").classList.toggle("on",s.maintMode==="manual"); { const cw=currentWeight(); $("sMaintHint").textContent = s.maintMode==="manual" ? "Manual value" : `${cw?cw.w:"—"} kg × 31`; } setIf("sIntake",s.targetIntake); setIf("sPlanSteps",s.planSteps); setIf("sPlanWork",s.planWork); setIf("sProt",s.proteinGoal);
+  setIf("wGoal",s.weeklyGoal); setIf("sAnchor",s.weekAnchor||""); $("sAnchorHint").textContent = s.weekAnchor ? `Today is day ${dayOfWeek(todayKey())} of 7` : "Blank = Monday to Sunday"; setIf("sWeekT",(s.weekTargets||{})[w.mon]); setIf("sWkDef",+s.weeklyDeficit>0?s.weeklyDeficit:null); setIf("sFinal",s.finalGoal);
+  { const b=s.bf||{}; setIf("sBfPct",b.pct); setIf("sBfW",b.weight); setIf("sGoalBf",s.goalBf); setIf("sGoalDate",s.goalDate||""); $("sGoalDate").min=shiftKey(todayKey(),1);
+    const I=bfInfo(), box=$("bfSummary");
+    if(!I){ box.innerHTML="Add your body fat % to get a safe weekly rate."; }
+    else { const dt=x=>x.toLocaleDateString("en-IN",{day:"numeric",month:"short"});
+      box.className="status "+(I.tooFast?"bad":"ok");
+      box.innerHTML = I.fatLeft<=0.05 ? `Now ≈ <b>${I.bf.toFixed(1)}%</b>. You’ve reached your ${I.goal}% goal.`
+        : `Now ≈ <b>${I.bf.toFixed(1)}%</b> at ${I.W} kg · goal weight <b>${I.goalW.toFixed(1)} kg</b> · <b>${I.fatLeft.toFixed(1)} kg</b> fat left<br>Target <b>${I.weeklyKg.toFixed(2)} kg/week</b> (${I.rate.toFixed(2)}%) = <b>${fmt(I.daily)} kcal</b> deficit/day · ${I.mode==="date"?"by":"about"} ${dt(I.finish)}`
+          + (I.tooFast?`<br>Your date is faster than the safe ${I.zone.range}/week. Earliest safe date: ${dt(I.earliest)}.`:""); }
+  }
+  setIf("sFt",s.heightFt); setIf("sIn",s.heightIn); setIf("sBw",s.bodyWeight);
+  $("sDietDef").textContent=`= ${fmt(maintFor()-(+s.targetIntake||0))} kcal diet deficit`;
+  $("basisBf").classList.toggle("on",s.basis==="bf"); $("basisHab").classList.toggle("on",s.basis==="habits"); $("basisWt").classList.toggle("on",s.basis==="target");
+  $("basisNote").innerHTML = s.basis==="bf" ? `Your plan follows the safe rate for your body fat: <b>${fmt(p.daily)} kcal/day</b> (${p.src}).`
+    : s.basis==="target"
+    ? `Your plan comes from your weight target: <b>${fmt(p.daily)} kcal/day</b> (${p.src}).`
+    : `Your plan is your target calories plus planned steps and workout: <b>${fmt(p.daily)} kcal/day</b>.`;
+  $("sWeekTHint").textContent = w.auto!=null?`Blank = auto (${w.auto.toFixed(2)} kg)`:"Blank = start weight + weekly goal";
+  $("sWkDefHint").textContent = "Used with Weight target. Blank = auto";
+  const sp=stepsParams();
+  $("stepsFormula").textContent=`Step calories: stride = ${sp.hCm.toFixed(0)} cm × 0.414 = ${(sp.stride*100).toFixed(0)} cm, walking ~5 km/h (MET 3.5), kcal = 3.5 × 3.5 × ${sp.w} kg ÷ 200 × minutes. 10,000 steps ≈ ${(sp.stride*10).toFixed(1)} km ≈ ${fmt(stepsKcal(10000))} kcal.`;
+}
+
+// ---------- events ----------
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{ state.tab=b.dataset.tab; lsSet("dl_tab",state.tab); hideTip(); render(); scrollTo({top:0}); });
+$("prevDay").onclick=()=>{ state.current=shiftKey(state.current,-1); render(); };
+$("nextDay").onclick=()=>{ if(state.current!==todayKey()){ state.current=shiftKey(state.current,1); render(); } };
+$("goToday").onclick=()=>{ state.current=todayKey(); render(); };
+function dayInput(id, fn){ $(id).addEventListener("input",()=>{ const k=state.current, d=getDay(k), v=$(id).value; fn(d, v===""?null:+v); render(); saveDaySoon(k); }); }
+dayInput("eKcal",(d,v)=>{ d.eaten = v==null?null:Math.max(0,v); });
+dayInput("eProt",(d,v)=>{ d.protein = v==null?null:Math.max(0,v); });
+dayInput("aWorkout",(d,v)=>{ d.workout = Math.max(0,v||0); });
+dayInput("aSteps",(d,v)=>{ d.steps=Math.max(0,v||0); d.stepsKcal=stepsKcal(d.steps,d.date); });
+dayInput("wInput",(d,v)=>{ if(v==null){ d.weight=null; } else if(v>=20 && v<=250){ d.weight=Math.round(v*100)/100; if(d.steps) d.stepsKcal=stepsKcal(d.steps,d.date); } });
+let resetArm=null;
+$("resetBtn").onclick=()=>{
+  const b=$("resetBtn");
+  if(!resetArm){ b.classList.add("armed"); b.textContent="Tap again to confirm"; resetArm=setTimeout(()=>{ resetArm=null; b.classList.remove("armed"); render(); },3000); return; }
+  clearTimeout(resetArm); resetArm=null; b.classList.remove("armed");
+  const k=state.current; state.days[k]=normDay(k); saveDay(k);
+  ["eKcal","aSteps","aWorkout","wInput","eProt"].forEach(id=>$(id).value="");
+  render(); toast("Cleared "+(k===todayKey()?"today":prettyKey(k)));
+};
+$("tmOne").onclick=()=>{ state.settings.tmSpread=false; saveSettings(); render(); };
+$("tmSpread").onclick=()=>{ state.settings.tmSpread=true; saveSettings(); render(); };
+["tmSteps","tmCal"].forEach(id=>$(id).addEventListener("input",()=>{ const v=$(id).value; state.settings[id]= v===""?null:+v; saveSettings(); renderTomorrow(); }));
+
+$("modeTarget").onclick=()=>{ pl().mode="target"; saveSettings(); render(); };
+$("modeEstimate").onclick=()=>{ pl().mode="estimate"; saveSettings(); render(); };
+$("fixDiet").onclick=()=>{ pl().fix="diet"; saveSettings(); render(); };
+$("fixSteps").onclick=()=>{ pl().fix="steps"; saveSettings(); render(); };
+["pCur","pDays","pGoalW","pIntake","pSteps","pWorkout"].forEach(id=>$(id).addEventListener("input",()=>{ const v=$(id).value; pl()[id]= v===""?null:+v; saveSettings(); renderPlanner(); }));
+$("plRes").addEventListener("click",e=>{
+  if(!e.target.closest("#plApply") || !PLAN_OUT) return;
+  const s=state.settings;
+  s.targetIntake=PLAN_OUT.cal; s.planSteps=PLAN_OUT.steps; s.planWork=PLAN_OUT.work; s.basis="habits";
+  s.tmSteps=null; s.tmCal=null;   // plan-for-tomorrow boxes follow the new plan
+  saveSettings(); render(); toast("Plan applied. Today and Week now follow it.");
+});
+let plArm=null;
+$("plReset").onclick=()=>{
+  const b=$("plReset");
+  if(!plArm){ b.classList.add("armed"); b.textContent="Tap again to confirm"; plArm=setTimeout(()=>{ plArm=null; b.classList.remove("armed"); b.textContent="Reset planner"; },3000); return; }
+  clearTimeout(plArm); plArm=null; b.classList.remove("armed"); b.textContent="Reset planner";
+  state.settings.planner={mode:pl().mode, fix:pl().fix}; saveSettings(); ["pCur","pDays","pGoalW","pIntake","pSteps","pWorkout"].forEach(id=>$(id).value=""); render(); toast("Planner reset");
+};
+
+function setting(id,key,{min=0,allowBlank=false,after}={}){
+  $(id).addEventListener("input",()=>{ const v=$(id).value;
+    if(v===""){ if(!allowBlank) return; state.settings[key]=null; }
+    else if(isNaN(+v) || (+v<min)) return; else state.settings[key]=+v;
+    if(after) after(); saveSettings(); render(); });
+}
+setting("sMaint","maintenance",{min:500, after:()=>{ state.settings.maintMode="manual"; }});
+$("mAuto").onclick=()=>{ state.settings.maintMode="auto"; saveSettings(); render(); };
+$("mManual").onclick=()=>{ const s=state.settings; if(s.maintMode!=="manual"){ s.maintenance=maintFor(); s.maintMode="manual"; } saveSettings(); render(); }; setting("sIntake","targetIntake",{min:300});
+setting("sPlanSteps","planSteps"); setting("sPlanWork","planWork"); setting("sProt","proteinGoal");
+setting("wGoal","weeklyGoal",{min:-5}); setting("sWkDef","weeklyDeficit",{allowBlank:true}); setting("sFinal","finalGoal",{min:20,allowBlank:true});
+const recalcSteps=()=>{ const d=state.days[todayKey()]; if(d && d.steps){ d.stepsKcal=stepsKcal(d.steps); saveDaySoon(todayKey()); } };
+setting("sFt","heightFt",{min:3,after:recalcSteps}); setting("sIn","heightIn",{after:recalcSteps}); setting("sBw","bodyWeight",{min:20,after:recalcSteps});
+$("sWeekT").addEventListener("input",()=>{ const v=$("sWeekT").value, mon=mondayOf(todayKey()), m={...(state.settings.weekTargets||{})};
+  if(v==="") delete m[mon]; else if(!isNaN(+v) && +v>=20) m[mon]=+v; else return;
+  state.settings.weekTargets=m; saveSettings(); render(); });
+$("basisHab").onclick=()=>{ state.settings.basis="habits"; saveSettings(); render(); };
+$("sAnchor").addEventListener("change",()=>{ state.settings.weekAnchor=$("sAnchor").value||null; saveSettings(); render(); });
+$("restartWeek").onclick=()=>{ state.settings.weekAnchor=todayKey(); saveSettings(); render(); toast("Today is day 1 of 7"); };
+$("openSetup").onclick=()=>openWizard();
+$("sBfPct").addEventListener("input",()=>{ const v=+$("sBfPct").value; if(v>2&&v<60){ const s=state.settings; s.bf={...(s.bf||{}), pct:v, weight:(s.bf&&s.bf.weight)||(currentWeight()?.w)||+s.bodyWeight||60, date:todayKey()}; saveSettings(); render(); } });
+$("sBfW").addEventListener("input",()=>{ const v=+$("sBfW").value; if(v>=20){ const s=state.settings; s.bf={...(s.bf||{}), weight:v}; saveSettings(); render(); } });
+$("sGoalBf").addEventListener("input",()=>{ const v=+$("sGoalBf").value; if(v>2&&v<50){ state.settings.goalBf=v; saveSettings(); render(); } });
+$("sGoalDate").addEventListener("change",()=>{ state.settings.goalDate=$("sGoalDate").value||null; saveSettings(); render(); });
+$("basisBf").onclick=()=>{ state.settings.basis="bf"; saveSettings(); render(); };
+$("basisWt").onclick=()=>{ state.settings.basis="target"; saveSettings(); render(); };
+
+
+// ---------- BODY FAT GOAL ----------
+const ZONES=[{min:20,rate:1.0,max:1.5,range:"1.0–1.5%",label:"Above 20%"},{min:15,rate:0.8,max:1.0,range:"0.7–1.0%",label:"15–20%"},{min:12,rate:0.6,max:0.7,range:"0.5–0.7%",label:"12–15%"},{min:10,rate:0.5,max:0.6,range:"0.4–0.6%",label:"10–12%"},{min:0,rate:0.35,max:0.5,range:"0.25–0.5%",label:"Below 10%"}];
+const zoneOf = bf => ZONES.find(z=>bf>=z.min);
+function avgWeight(endKey,n){ let sum=0,c=0; for(let i=0;i<n;i++){ const d=state.days[shiftKey(endKey,-i)]; if(d && d.weight!=null){ sum+=+d.weight; c++; } } return c?{avg:sum/c,count:c}:null; }
+// Core goal maths, shared by the setup wizard and the tracker
+function goalMath({weight, bfPct, goalBf, goalDate, customRate, fromWeight}){
+  const lbm=(fromWeight||weight)*(1-bfPct/100), W=weight;
+  const bf=Math.max(3,(1-lbm/W)*100), goalW=lbm/(1-goalBf/100), fatLeft=Math.max(0,W-goalW), z=zoneOf(bf);
+  // safe-pace projection (rate slows as you get leaner)
+  let w=W, safeWeeks=0; while(w>goalW && safeWeeks<156){ const r=customRate>0?customRate:zoneOf((1-lbm/w)*100).rate; const st=w*r/100; if(w-st<goalW){ safeWeeks+=(w-goalW)/st; w=goalW; break; } w-=st; safeWeeks++; }
+  // fastest pace that stays inside each zone's upper limit
+  let w2=W, fastWeeks=0; while(w2>goalW && fastWeeks<156){ const r=zoneOf((1-lbm/w2)*100).max; const st=w2*r/100; if(w2-st<goalW){ fastWeeks+=(w2-goalW)/st; w2=goalW; break; } w2-=st; fastWeeks++; }
+  const earliest=new Date(); earliest.setDate(earliest.getDate()+Math.ceil(fastWeeks*7));
+  let rate, weeks, mode="safe", tooFast=false, tooSlow=false;
+  const daysToDate = goalDate ? Math.round((parseKey(goalDate)-parseKey(todayKey()))/864e5) : 0;
+  if(goalDate && daysToDate>0 && fatLeft>0.05){
+    mode="date"; weeks=daysToDate/7; const wk=fatLeft/weeks; rate=wk/W*100;
+    tooFast = rate>z.max+0.001; tooSlow = rate<0.2;
+  } else { rate = customRate>0 ? customRate : z.rate; weeks=safeWeeks; }
+  const weeklyKg=W*rate/100, daily=weeklyKg*KCAL_PER_KG/7;
+  const finish=new Date(); finish.setDate(finish.getDate()+Math.round(weeks*7));
+  return {lbm, W, bf, goal:goalBf, goalW, fatLeft, zone:z, rate, weeklyKg, daily, weeks, finish, mode, tooFast, tooSlow, earliest, fastWeeks, safeWeeks, bmr:370+21.6*lbm};
+}
+// Body fat estimate for a given day: lean mass stays fixed, weight changes
+function bfOn(k){ const s=state.settings, b=s.bf; if(!b||!(+b.pct>0)||!(+b.weight>0)) return null; const w=latestWeightOnOrBefore(k||todayKey()); if(!w) return null;
+  const lbm=b.weight*(1-b.pct/100); return {bf:Math.max(3,(1-lbm/w.w)*100), goal:+s.goalBf||10, lbm}; }
+function bfInfo(){
+  const s=state.settings, b=s.bf; if(!b || !(+b.pct>0) || !(+b.weight>0)) return null;
+  const cw=currentWeight(), a=null;
+  const W = cw ? cw.w : +b.weight;
+  const g=goalMath({weight:W, bfPct:+b.pct, fromWeight:+b.weight, goalBf:+s.goalBf||10, goalDate:s.goalDate, customRate:+s.bfRate||0});
+  return {...g, startBf:+b.pct, fromAvg:!!a};
+}
+// ---------- SETUP WIZARD ----------
+let WZ=null;
+function openWizard(first){
+  const s=state.settings, cw=currentWeight(), b=s.bf||{};
+  WZ={step:1, first:!!first, w: cw?cw.w:(b.weight||null), ft:s.heightFt||null, inch:s.heightIn??null, bf:b.pct||null,
+      life:s.lifeFactor||1.2, maint: s.maintMode==="manual" ? s.maintenance : null, goal:s.goalBf||null,
+      pace: s.goalDate?"date":"safe", date:s.goalDate||"", steps: s.planSteps??8000, work: s.planWork??0};
+  state.tab="setup"; hideTip(); render(); scrollTo({top:0});
+}
+function wzMaintEst(){ return WZ.w>0 ? Math.round(WZ.w*MAINT_FACTOR) : null; }
+function wzMath(){
+  if(!(WZ.w>0 && WZ.bf>0 && WZ.goal>0)) return null;
+  return goalMath({weight:WZ.w, bfPct:WZ.bf, goalBf:WZ.goal, goalDate: WZ.pace==="date"?WZ.date:null, customRate:0});
+}
+function renderWizard(){
+  const st=WZ.step;
+  document.querySelectorAll("#wzSteps span").forEach(x=>{ const n=+x.dataset.s; x.className = n===st?"on":n<st?"done":""; });
+  document.querySelectorAll("[data-step]").forEach(x=>x.hidden = +x.dataset.step!==st);
+  $("zBack").style.visibility = st===1?"hidden":"visible";
+  $("zNext").textContent = st===3 ? "Start tracking" : "Next";
+  $("zSkip").hidden = WZ.first;
+  const d=(id,v)=>setIf(id,v);
+  d("zW",WZ.w); d("zFt",WZ.ft); d("zIn",WZ.inch); d("zBf",WZ.bf); d("zMaint",WZ.maint); d("zGoal",WZ.goal); d("zDate",WZ.date); d("zSteps",WZ.steps); d("zWork",WZ.work);
+  document.querySelectorAll("#zLife button").forEach(x=>x.classList.toggle("on",+x.dataset.v===+WZ.life));
+  const est=wzMaintEst();
+  $("zMaint").placeholder = est ? String(est) : "Auto";
+  $("zMaintHint").textContent = est ? `${WZ.w} kg × 31 = ${fmt(est)} kcal. Leave blank to use it (updates as your weight changes), or enter yours.` : "Enter your weight to calculate";
+  if(!WZ.goal && WZ.bf) { WZ.goal = Math.max(8, Math.round((WZ.bf-4)*2)/2); d("zGoal",WZ.goal); }
+  $("zPaceSafe").classList.toggle("on",WZ.pace==="safe"); $("zPaceDate").classList.toggle("on",WZ.pace==="date");
+  $("zDateRow").hidden = WZ.pace!=="date"; $("zDate").min=shiftKey(todayKey(),7);
+  const g=wzMath();
+  const maint = WZ.maint>0 ? WZ.maint : est;
+  const dt = x=>x.toLocaleDateString("en-IN",{day:"numeric",month:"short",year:"numeric"});
+  if(g){
+    $("zGoalKpis").innerHTML=`<div class="kpi"><span class="label">Lean mass</span><b>${g.lbm.toFixed(1)} kg</b></div><div class="kpi"><span class="label">Goal weight</span><b>${g.goalW.toFixed(1)} kg</b></div><div class="kpi"><span class="label">Fat to lose</span><b>${g.fatLeft.toFixed(1)} kg</b></div><div class="kpi"><span class="label">Safe finish</span><b>${new Date(Date.now()+g.safeWeeks*7*864e5).toLocaleDateString("en-IN",{day:"numeric",month:"short"})}</b><span class="hint">~${Math.ceil(g.safeWeeks)} weeks</span></div>`;
+    let pr="";
+    if(g.fatLeft<=0.05) pr=`<div class="flag warn">You’re already at or below this body fat. Pick a lower goal, or use the tracker to maintain.</div>`;
+    else if(WZ.pace==="date" && !WZ.date) pr=`<p class="note">Pick a date. The earliest safe date for you is <b>${dt(g.earliest)}</b>.</p>`;
+    else if(g.mode==="date") pr = g.tooFast
+      ? `<div class="flag bad">That needs <b>${g.weeklyKg.toFixed(2)} kg a week (${g.rate.toFixed(2)}%)</b>, faster than the safe ${g.zone.range} for ${g.bf.toFixed(0)}% body fat. You’d likely lose muscle. Earliest safe date: <b>${dt(g.earliest)}</b>.</div>`
+      : `<div class="flag ok">That’s <b>${g.weeklyKg.toFixed(2)} kg a week (${g.rate.toFixed(2)}% of bodyweight)</b>, within the safe range. Daily deficit needed: <b>${fmt(g.daily)} kcal</b>.</div>`;
+    else pr=`<div class="flag ok">Safe pace starts at <b>${g.weeklyKg.toFixed(2)} kg a week (${g.rate.toFixed(2)}%)</b> and slows as you get leaner. Daily deficit now: <b>${fmt(g.daily)} kcal</b>.</div>`;
+    $("zPaceRes").innerHTML=pr;
+  } else { $("zGoalKpis").innerHTML=""; $("zPaceRes").innerHTML=""; }
+  if(st===3 && g && maint){
+    const sk = Math.round((+WZ.steps||0)*wzKcalPerStep()), work=+WZ.work||0;
+    const dietDef = g.daily - sk - work, cal = Math.round((maint - dietDef)/10)*10, prot=Math.round(WZ.w*2/5)*5;
+    $("zSummary").innerHTML=`<div class="reshead"><div><div class="label">Goal</div><b class="num">${g.goalW.toFixed(1)} kg · ${g.goal}%</b></div><div class="side num">Lose ${g.fatLeft.toFixed(1)} kg fat by ${g.finish.toLocaleDateString("en-IN",{day:"numeric",month:"short"})}<br>${g.weeklyKg.toFixed(2)} kg/week · ${fmt(g.daily)} kcal deficit/day</div></div>`;
+    const row=(c,t,sub,v)=>`<div class="r"><i style="background:${c}"></i><div class="t">${t}${sub?`<small>${sub}</small>`:""}</div><b class="num">${v}</b></div>`;
+    let h=`<div class="rows">${row("var(--diet)","Eat per day",`Maintenance ${fmt(maint)} − ${fmt(Math.max(0,dietDef))} diet deficit`,fmt(cal)+" kcal")}${row("var(--act)","Steps",`${fmt(+WZ.steps||0)} steps/day`,fmt(sk)+" kcal")}${row("var(--act)","Workout","",fmt(work)+" kcal")}${row("var(--protein)","Protein","2 g per kg bodyweight",prot+" g")}<div class="r sum"><i></i><div class="t">Total deficit per day</div><b class="num">${fmt(g.daily)}</b></div></div>`;
+    if(dietDef<0) h+=`<div class="flag ok">Your steps and workout cover the whole deficit, so you can eat at maintenance or slightly above.</div>`;
+    if(cal < g.bmr) h+=`<div class="flag bad">${fmt(cal)} kcal is below your resting burn (~${fmt(g.bmr)} kcal). Walk more, or give yourself more time.</div>`;
+    if(g.tooFast) h+=`<div class="flag warn">Your date is faster than the safe pace. Consider moving it to ${dt(g.earliest)}.</div>`;
+    $("zPlanRes").innerHTML=h;
+    WZ._out={cal, prot, maint};
+  }
+}
+function wzKcalPerStep(){ const hCm=((+WZ.ft||0)*12+(+WZ.inch||0))*2.54; const stride=hCm*0.414/100; return 3.5*3.5*(WZ.w||60)/200*(stride/1000/5*60); }
+function wzValid(step){
+  if(step===1){ if(!(WZ.w>=30)) return "Enter your weight"; if(!(WZ.ft>=3)) return "Enter your height"; if(!(WZ.bf>=4)) return "Enter your body fat %"; }
+  if(step===2){ if(!(WZ.goal>=4)) return "Enter a goal body fat"; const g=wzMath(); if(g && g.fatLeft<=0.05) return "Pick a goal below your current body fat"; if(WZ.pace==="date" && !WZ.date) return "Pick a date or choose safe pace"; }
+  return null;
+}
+function wzFinish(){
+  const g=wzMath(), o=WZ._out; if(!g||!o) return;
+  const s=state.settings;
+  Object.assign(s,{heightFt:+WZ.ft, heightIn:+WZ.inch||0, bodyWeight:+WZ.w, lifeFactor:+WZ.life, maintenance:o.maint, maintMode: WZ.maint>0?"manual":"auto", targetIntake:o.cal, proteinGoal:o.prot,
+    planSteps:+WZ.steps||0, planWork:+WZ.work||0, bf:{pct:+WZ.bf, weight:+WZ.w, date:todayKey()}, goalBf:+WZ.goal, goalDate: WZ.pace==="date"?WZ.date:null,
+    bfRate:null, basis:"bf", setupDone:true, _bfMigrated:true});
+  if(!s.cutStart) s.cutStart=todayKey();
+  const d=getDay(todayKey()); if(d.weight==null){ d.weight=+WZ.w; saveDay(todayKey()); }
+  saveSettings(); state.tab="today"; lsSet("dl_tab","today"); render(); scrollTo({top:0}); toast("You’re set. Log your day here.");
+}
+function wzNum(id,key){ $(id).addEventListener("input",()=>{ const v=$(id).value; WZ[key]= v===""?null:+v; renderWizard(); }); }
+wzNum("zW","w"); wzNum("zFt","ft"); wzNum("zIn","inch"); wzNum("zBf","bf"); wzNum("zMaint","maint"); wzNum("zGoal","goal"); wzNum("zSteps","steps"); wzNum("zWork","work");
+$("zDate").addEventListener("change",()=>{ WZ.date=$("zDate").value; renderWizard(); });
+document.querySelectorAll("#zLife button").forEach(x=>x.onclick=()=>{ WZ.life=+x.dataset.v; renderWizard(); });
+$("zPaceSafe").onclick=()=>{ WZ.pace="safe"; renderWizard(); };
+$("zPaceDate").onclick=()=>{ WZ.pace="date"; renderWizard(); };
+$("zBack").onclick=()=>{ if(WZ.step>1){ WZ.step--; renderWizard(); scrollTo({top:0}); } };
+$("zNext").onclick=()=>{ const err=wzValid(WZ.step); if(err){ toast(err); return; } if(WZ.step<3){ WZ.step++; renderWizard(); scrollTo({top:0}); } else wzFinish(); };
+$("zSkip").onclick=()=>{ state.tab="settings"; render(); };
+
+// ---------- storage check + backup ----------
+let storageOK=true;
+try{ localStorage.setItem("dl_probe","1"); storageOK = localStorage.getItem("dl_probe")==="1"; localStorage.removeItem("dl_probe"); }catch(e){ storageOK=false; }
+function backupCode(){ const data={v:1, settings:state.settings, days:state.days}; return "DL1:"+btoa(unescape(encodeURIComponent(JSON.stringify(data)))); }
+$("bkCopy").onclick=()=>{
+  const code=backupCode(), ta=$("bkText"); ta.value=code;
+  const done=()=>{ toast("Backup code copied"); $("bkInfo").textContent=`${Object.keys(state.days).length} days saved in this code`; };
+  try{ navigator.clipboard.writeText(code).then(done,()=>{ ta.select(); toast("Select all and copy the code shown"); }); }catch(e){ ta.select(); toast("Select all and copy the code shown"); }
+};
+let bkArm=null;
+$("bkRestore").onclick=()=>{
+  const raw=$("bkText").value.trim(), b=$("bkRestore");
+  let data; try{ if(!raw.startsWith("DL1:")) throw 0; data=JSON.parse(decodeURIComponent(escape(atob(raw.slice(4))))); if(!data.settings||!data.days) throw 0; }catch(e){ toast("That code isn’t valid. Copy the whole code and try again."); return; }
+  if(!bkArm){ b.classList.add("armed"); b.textContent="Tap again: replaces current data"; bkArm=setTimeout(()=>{ bkArm=null; b.classList.remove("armed"); b.textContent="Restore from code"; },4000); return; }
+  clearTimeout(bkArm); bkArm=null; b.classList.remove("armed"); b.textContent="Restore from code";
+  state.settings=normSettings(data.settings); state.days={}; for(const [k,d] of Object.entries(data.days)) state.days[k]=normDay(k,d);
+  lsSet("dl_settings2",state.settings); lsSet("dl_days2",state.days);
+  if(db){ saveSettings(); Object.keys(state.days).forEach(k=>saveDay(k)); }
+  $("bkText").value=""; state.tab="today"; render(); toast(`Restored ${Object.keys(state.days).length} days`);
+};
+// tooltips
+const tip=$("tip"); let tipOn=null;
+function showTip(g,cx,cy){ const [kind,i]=g.dataset.tip.split(":"), html=(TIPS[kind]||[])[+i]; if(!html) return;
+  if(tipOn && tipOn!==g) tipOn.classList.remove("on"); tipOn=g; g.classList.add("on"); tip.innerHTML=html; tip.hidden=false;
+  const r=tip.getBoundingClientRect(); let x=cx+14, y=cy-r.height-12; if(x+r.width>innerWidth-8) x=cx-r.width-14; if(x<8) x=8; if(y<8) y=cy+16;
+  tip.style.left=x+"px"; tip.style.top=y+"px"; }
+function hideTip(){ tip.hidden=true; if(tipOn){ tipOn.classList.remove("on"); tipOn=null; } }
+["chart","wChart"].forEach(id=>{ const el=$(id);
+  el.addEventListener("pointermove",e=>{ if(e.pointerType!=="mouse") return; const g=e.target.closest("[data-tip]"); g?showTip(g,e.clientX,e.clientY):hideTip(); });
+  el.addEventListener("pointerleave",e=>{ if(e.pointerType==="mouse") hideTip(); });
+  el.addEventListener("click",e=>{ const g=e.target.closest("[data-tip]"); if(g){ if(tipOn===g && e.pointerType!=="mouse") hideTip(); else showTip(g,e.clientX,e.clientY); e.stopPropagation(); } });
+});
+document.addEventListener("click",()=>hideTip()); addEventListener("scroll",()=>hideTip(),{passive:true});
+let rsz; addEventListener("resize",()=>{ clearTimeout(rsz); rsz=setTimeout(()=>{ if(state.tab==="week") renderWeekView(); },150); });
+
+let toastT; function toast(m){ const t=$("toast"); t.textContent=m; t.classList.add("show"); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("show"),1900); }
+
+
+// ---------- COACH+ FEATURES (local-only, persisted in existing day/settings records) ----------
+const FOOD_DB = [
+  ["Roti, plain","1 medium (35 g)",110,3.2],["Cooked rice","1 cup (150 g)",195,4.0],
+  ["Dal, cooked","1 cup (180 g)",190,11],["Paneer","100 g",265,18],
+  ["Soya chunks, dry","50 g",173,26],["Egg, boiled","1 large",78,6.3],
+  ["Poha, cooked","1 cup",250,5],
+  ["Oats, dry","40 g",152,5.2],["Banana","1 medium",105,1.3],
+  ["Peanuts","25 g",142,6.5],["Milk, toned","250 ml",150,8],
+  ["Moong dal chilla","2 medium",220,13],["Sprouts, mixed","1 cup",100,7],
+  ["Idli","2 pieces",120,4],["Dosa, plain","1 medium",168,4],
+  ["Rajma, cooked","1 cup",225,13],["Chana, cooked","1 cup",269,14.5],
+  ["Apple","1 medium",95,0.5],["Almonds","15 g",87,3.2],
+  ["Vegetable sabzi","1 cup",140,3],["Brown rice, cooked","1 cup",215,5]
+].filter(x => Number.isFinite(x[2]));
+// Correct one common database entry without relying on external services.
+FOOD_DB.push(["Curd, plain","100 g",61,3.5]);
+const EXTRA_DEFAULTS = {sleep:null, water:null, cigarettes:null, waist:null, chest:null, hip:null, foodLog:[]};
+function dayExtra(k=todayKey()){
+  const d=getDay(k); d.extra={...EXTRA_DEFAULTS,...(d.extra||{})}; return d.extra;
+}
+function coachSaveDay(){ saveDay(todayKey()); }
+function safeNum(id, fallback=0){ const v=Number($(id).value); return Number.isFinite(v)?v:fallback; }
+function setCoachInput(id,v){ if(document.activeElement!==$(id)) $(id).value=v==null?"":v; }
+function renderFood(){
+  const q=($("foodSearch").value||"").trim().toLowerCase(), hits=FOOD_DB.filter(f=>!q || f[0].toLowerCase().includes(q)).slice(0,12);
+  $("foodResults").innerHTML=hits.map((f,i)=>`<div class="r"><i style="background:var(--diet)"></i><div class="t">${f[0]}<small>${f[1]} · ${f[2]} kcal · ${f[3]} g protein</small></div><button class="btn ghost" type="button" data-food="${FOOD_DB.indexOf(f)}">Add</button></div>`).join("") || `<div class="r">No matching food found.</div>`;
+  const x=dayExtra(), kcal=x.foodLog.reduce((a,f)=>a+f.kcal,0), protein=x.foodLog.reduce((a,f)=>a+f.protein,0);
+  $("foodTotals").textContent=`Food log additions today: ${fmt(kcal)} kcal · ${protein.toFixed(1)} g protein`;
+}
+
+// ---------- SMART AUTO-PLANNER ----------
+function autoPlan(){
+  const s=state.settings, w=currentWeight()?.w || +s.bodyWeight || 0;
+  const maint=maintFor(), intake=+s.targetIntake||0;
+  const recent=entriesWeight().filter(p=>p.k>=shiftKey(todayKey(),-27));
+  const last7=recent.filter(p=>p.k>shiftKey(todayKey(),-7));
+  const prev7=recent.filter(p=>p.k<=shiftKey(todayKey(),-7));
+  const avg=a=>a.length?a.reduce((n,p)=>n+p.w,0)/a.length:null;
+  const trend=avg(last7)!=null&&avg(prev7)!=null?avg(last7)-avg(prev7):null;
+  // Start with a moderate 15% deficit, capped at 500 kcal/day.
+  let deficit=Math.min(500,Math.max(250,maint*.15));
+  // Avoid pushing the plan harder when the recent trend is already fast.
+  if(trend!=null && w>0 && trend < -(w*.007)) deficit=Math.min(deficit,250);
+  let suggested=Math.round((maint-deficit)/25)*25;
+  // Conservative floor for an unsupervised generic planner; clinician guidance may differ.
+  suggested=Math.max(1200,suggested);
+  const protein=Math.round(Math.max(1,Math.min(1.6,1.6))*w);
+  const currentSteps=+s.planSteps||0;
+  const steps=Math.min(10000,Math.max(5000,currentSteps||6000));
+  const weeklyRate=deficit*7/7700;
+  return {w,maint,suggested,protein,steps,weeklyRate,trend,intake};
+}
+function renderAutoPlan(){
+  const p=autoPlan();
+  $("autoMaint").textContent=fmt(p.maint);
+  $("autoIntake").textContent=fmt(p.suggested);
+  $("autoProtein").textContent=p.w?fmt(p.protein):"—";
+  $("autoSteps").textContent=fmt(p.steps);
+  let msg=`Using the latest available weight (${p.w?p.w.toFixed(1)+" kg":"not set"}) and your current maintenance method, estimated maintenance is ${fmt(p.maint)} kcal/day. Suggested intake creates a moderate starting deficit; expected mathematical fat-equivalent change is about ${(p.weeklyRate).toFixed(2)} kg/week before real-world variation.`;
+  if(p.trend!=null) msg+=` Recent 7-day average trend: ${p.trend>0?"+":""}${p.trend.toFixed(2)} kg versus the previous period.`;
+  msg+=" Targets are estimates. Review energy, hunger, recovery and weekly average weight before changing the plan.";
+  $("autoPlanSummary").textContent=msg;
+  $("autoPlanStatus").textContent=p.w?"Recommendations calculated":"Add your weight";
+  return p;
+}
+function applyAutoPlan(){
+  const p=renderAutoPlan();
+  if(!p.w){toast("Add your current weight in Setup or Today first.");return;}
+  state.settings.targetIntake=p.suggested;
+  state.settings.proteinGoal=p.protein;
+  state.settings.planSteps=p.steps;
+  state.settings.basis="habits";
+  state.settings.maintMode="auto";
+  saveSettings();
+  render();
+  toast("Suggested daily plan applied");
+}
+
+function renderCoach(){
+  const x=dayExtra(), d=getDay(todayKey()), entries=Object.entries(state.days).sort((a,b)=>a[0].localeCompare(b[0]));
+  setCoachInput("sleepInput",x.sleep); setCoachInput("waterInput",x.water); setCoachInput("smokeInput",x.cigarettes);
+  setCoachInput("waistInput",x.waist); setCoachInput("chestInput",x.chest); setCoachInput("hipInput",x.hip);
+  setCoachInput("simCalories",state.settings.targetIntake||1800); setCoachInput("simSteps",state.settings.planSteps||0);
+  renderAutoPlan(); renderFood(); renderPlateau(); renderConsistency(); renderMeasurements(); renderLifestyleFeedback(); renderSimulator(); renderSafety(); renderAchievements(); renderMealPlan();
+  $("waterSummary").textContent=(x.water==null?"0":(+x.water).toFixed(1))+" L";
+  $("sleepSummary").textContent=x.sleep==null?"—":(+x.sleep).toFixed(1)+" h";
+  const tracked=entries.filter(([k,v])=>v.eaten!=null || v.steps>0 || v.weight!=null).length;
+  const advice=[];
+  if(x.sleep!=null && x.sleep<7) advice.push("Sleep is below 7 hours today; prioritize a consistent bedtime.");
+  if(x.water!=null && x.water<1.5) advice.push("Your logged water is low. Drink regularly and adjust for heat, activity and medical advice.");
+  if(x.cigarettes>0) advice.push(`You logged ${x.cigarettes} cigarettes today. Compare this with your recent baseline and consider a practical reduction step.`);
+  if(d.eaten!=null && d.eaten<1200) advice.push("Today's logged intake is very low. Do not try to compensate with extra exercise; review your target with a qualified professional.");
+  if(!advice.length) advice.push(tracked>=3?"Keep logging consistently. Judge progress by multi-week trends, not a single weigh-in.":"Log food, weight and lifestyle for several days; the coach needs real data before giving useful trend feedback.");
+  $("coachAdvice").textContent=advice.join(" ");
+  $("coachStatus").textContent=tracked+" tracked days";
+}
+function renderLifestyleFeedback(){
+  const x=dayExtra(), bits=[];
+  if(x.sleep!=null) bits.push(x.sleep<7?"Sleep below 7h":"Sleep logged");
+  if(x.water!=null) bits.push(x.water<1.5?"Water log is under 1.5 L":"Water logged");
+  if(x.cigarettes!=null) bits.push(x.cigarettes===0?"No cigarettes logged":`${x.cigarettes} cigarettes logged`);
+  $("lifestyleStatus").textContent=bits.length?"Saved · "+bits.join(" · "):"No entry yet";
+  $("lifestyleFeedback").textContent=bits.length?bits.join(". ")+".":"Track sleep, water and cigarettes to see your patterns.";
+}
+function renderConsistency(){
+  const recent=Array.from({length:7},(_,i)=>state.days[shiftKey(todayKey(),-i)]).filter(Boolean);
+  const score=Math.round((recent.filter(d=>d.eaten!=null).length/7*40)+(recent.filter(d=>d.weight!=null).length/7*20)+(recent.filter(d=>d.steps>0).length/7*20)+(recent.filter(d=>d.extra && (d.extra.sleep!=null||d.extra.water!=null)).length/7*20));
+  let streak=0; for(let i=0;i<365;i++){const d=state.days[shiftKey(todayKey(),-i)];if(!d || (d.eaten==null && !d.steps && d.weight==null))break;streak++;}
+  $("consistencyScore").textContent=score; $("streakScore").textContent=streak;
+}
+function renderMeasurements(){
+  const pts=Object.entries(state.days).filter(([k,d])=>d.extra && ["waist","chest","hip"].some(a=>d.extra[a]!=null)).sort((a,b)=>a[0].localeCompare(b[0]));
+  const first=pts[0]?.[1]?.extra, latest=pts[pts.length-1]?.[1]?.extra;
+  for(const [key,id] of [["waist","waistChange"],["chest","chestChange"],["hip","hipChange"]]){
+    const a=first?.[key],b=latest?.[key]; $(id).textContent=a!=null&&b!=null?(b-a>0?"+":"")+(b-a).toFixed(1)+" cm":"—";
+  }
+  const weights=entriesWeight(); $("bodyWeightChange").textContent=weights.length>1?sgn(weights[weights.length-1].w-weights[0].w)+" kg":"—";
+}
+function entriesWeight(){return Object.entries(state.days).filter(([k,d])=>d.weight!=null).sort((a,b)=>a[0].localeCompare(b[0])).map(([k,d])=>({k,w:+d.weight}));}
+function renderPlateau(){
+  const pts=entriesWeight().filter(p=>p.k>=shiftKey(todayKey(),-20));
+  if(pts.length<8){$("plateauBadge").textContent="Need more data";$("plateauText").textContent=`${pts.length} recent weigh-ins found. Log at least 8 over 14+ days.`;return;}
+  const early=pts.filter(p=>p.k<=shiftKey(todayKey(),-7)), late=pts.filter(p=>p.k>shiftKey(todayKey(),-7));
+  if(early.length<3||late.length<3){$("plateauBadge").textContent="Need more data";$("plateauText").textContent="Need at least 3 weigh-ins in each comparison period.";return;}
+  const avg=a=>a.reduce((s,p)=>s+p.w,0)/a.length, delta=avg(late)-avg(early);
+  const isFlat=Math.abs(delta)<0.15;
+  $("plateauBadge").textContent=isFlat?"Possible plateau":"Trend moving";
+  $("plateauBadge").className="pill "+(isFlat?"warn":"ok");
+  $("plateauText").textContent=isFlat?`Your recent 7-day average is nearly flat (${delta>0?"+":""}${delta.toFixed(2)} kg vs the prior period). Check adherence, portions, sleep and sodium. Do not slash calories based on this signal; reassess after another 1–2 weeks.`:`Your recent average changed ${delta>0?"+":""}${delta.toFixed(2)} kg versus the previous period. This does not prove fat change; keep watching the trend.`;
+}
+function renderSimulator(){
+  const days=Math.max(7,Math.min(365,safeNum("simDays",30))), cal=safeNum("simCalories",state.settings.targetIntake||1800), steps=Math.max(0,safeNum("simSteps",0));
+  const maint=maintFor(), walk=stepsKcal(steps), daily=maint-cal+walk+(+state.settings.planWork||0), rate=daily*days/7700;
+  const w=currentWeight()?.w||+state.settings.bodyWeight||0;
+  let msg=`Estimated deficit: ${fmt(daily)} kcal/day. Over ${days} days: about ${Math.abs(rate).toFixed(2)} kg ${rate>=0?"fat-equivalent loss":"gain"}; `;
+  if(w) msg+=`scale-weight estimate: ${(w-rate).toFixed(2)} kg from ${w.toFixed(2)} kg. `;
+  msg+=daily>0? "Actual results will vary; this estimate assumes the same average every day.":"This scenario does not create a calorie deficit.";
+  const unsafe=cal<1200 || (w>0 && daily*7/7700>w*.01);
+  $("simResult").className="status "+(unsafe?"bad":"idle"); $("simResult").textContent=msg+(unsafe?" Safety check: this scenario is too aggressive or too low for an unsupervised plan. Increase calories or extend the timeline.":"");
+}
+function renderSafety(){
+  const w=currentWeight()?.w||+state.settings.bodyWeight||0, cal=+state.settings.targetIntake||0, maint=maintFor();
+  const weekly=(Math.max(0,maint-cal)+stepsKcal(+state.settings.planSteps||0)+(+state.settings.planWork||0))*7/7700;
+  const pct=w?weekly/w*100:0, flags=[];
+  if(cal<1200) flags.push("Target calories are below 1,200 kcal/day. Do not use this without professional supervision.");
+  if(cal>0 && maint-cal>1000) flags.push("Diet-only deficit exceeds 1,000 kcal/day; consider a smaller deficit.");
+  if(w && pct>1) flags.push(`Planned rate is approximately ${pct.toFixed(1)}% of bodyweight/week, above a conservative unsupervised range.`);
+  if(+state.settings.planSteps>20000) flags.push("Planned daily steps exceed 20,000; check recovery and build up gradually.");
+  $("safetyPanel").className="status "+(flags.length?"bad":"ok");
+  $("safetyPanel").textContent=flags.length?flags.join(" "):"No automatic red flags from the configured numbers. Estimates are imperfect; use a sustainable pace and monitor how you feel.";
+}
+function renderAchievements(){
+  const days=Object.values(state.days), tracked=days.filter(d=>d.eaten!=null||d.steps>0||d.weight!=null).length;
+  const x=dayExtra(), items=[
+    [tracked>=1,"First log","Logged your first tracking day"],
+    [tracked>=7,"One-week observer","Logged at least 7 days"],
+    [tracked>=30,"Thirty-day builder","Logged at least 30 days"],
+    [days.filter(d=>d.weight!=null).length>=5,"Trend builder","Recorded 5 bodyweight entries"],
+    [days.some(d=>d.extra&&d.extra.waist!=null),"Beyond the scale","Recorded a body measurement"],
+    [x.cigarettes===0 && x.cigarettes!=null,"Smoke-free day","Logged zero cigarettes today"],
+    [renderConsistencyValue()>=80,"Consistent week","Consistency score reached 80"]
+  ];
+  $("achievementList").innerHTML=items.map(a=>`<div class="r"><i style="background:${a[0]?"var(--diet)":"var(--line)"}"></i><div class="t">${a[0]?"✓ ":""}${a[1]}<small>${a[2]}</small></div><b>${a[0]?"Unlocked":"Locked"}</b></div>`).join("");
+}
+function renderConsistencyValue(){return Number($("consistencyScore").textContent)||0;}
+const MEALS=[
+  ["Breakfast","Oats + milk + banana","₹35",330,13],["Lunch","Dal + 2 roti + seasonal sabzi","₹45",520,19],
+  ["Snack","Curd + roasted chana","₹25",210,12],["Dinner","Soya chunks + rice + vegetables","₹45",520,30]
+];
+function renderMealPlan(){
+  const days=Math.max(1,Math.min(7,safeNum("mealDays",7))), budget=Math.max(100,safeNum("groceryBudget",900));
+  const totalPerDay=MEALS.reduce((s,m)=>s+Number(m[2].replace(/[₹,]/g,"")),0); const total=totalPerDay*days;
+  $("mealPlan").innerHTML=MEALS.map(m=>`<div class="r"><i style="background:var(--diet)"></i><div class="t">${m[0]} · ${m[1]}<small>${m[3]} kcal · ${m[4]} g protein · ${m[2]}</small></div><b>${m[2]}</b></div>`).join("");
+  $("groceryCost").textContent=`Estimated cost: ₹${total} for ${days} day(s)`;
+  $("groceryBudget").dataset.total=String(total);
+}
+function buildGrocery(){
+  const days=Math.max(1,Math.min(7,safeNum("mealDays",7))), factor=days/7;
+  const items=[["Oats",280*factor,"g"],["Milk",1.75*factor,"L"],["Banana",7*factor,"pieces"],["Dal",350*factor,"g"],["Wheat flour",500*factor,"g"],["Seasonal vegetables",1.4*factor,"kg"],["Curd",700*factor,"g"],["Roasted chana",175*factor,"g"],["Soya chunks",350*factor,"g"],["Rice",350*factor,"g"]];
+  const cost=Math.round(1050*factor);
+  $("groceryList").textContent=items.map(a=>`${a[0]}: ${a[1]<10?a[1].toFixed(1):Math.round(a[1])} ${a[2]}`).join(" · ") + ` · Approximate total ₹${cost}.`;
+  $("groceryCost").textContent=`Estimated cost: ₹${cost}`;
+  if(cost>safeNum("groceryBudget",900)) $("groceryList").textContent+=` This exceeds your entered budget by about ₹${cost-safeNum("groceryBudget",900)}; reduce quantities or substitute locally priced staples.`;
+}
+$("foodSearch").addEventListener("input",renderFood);
+$("foodResults").addEventListener("click",e=>{
+  const b=e.target.closest("[data-food]"); if(!b)return;
+  const f=FOOD_DB[+b.dataset.food], qty=Math.max(.25,Math.min(10,safeNum("foodQty",1))), x=dayExtra();
+  const kcal=Math.round(f[2]*qty), protein=+(f[3]*qty).toFixed(1);
+  x.foodLog.push({name:f[0],portion:f[1],qty,kcal,protein});
+  const d=getDay(todayKey()); d.eaten=(d.eaten==null?0:d.eaten)+kcal; d.protein=(d.protein==null?0:d.protein)+protein;
+  coachSaveDay(); renderFood(); render(); toast(`${f[0]} added · ${kcal} kcal`);
+});
+$("saveLifestyle").onclick=()=>{
+  const x=dayExtra(), sleep=safeNum("sleepInput",-1), water=safeNum("waterInput",-1), smoke=safeNum("smokeInput",-1);
+  if(sleep<0||sleep>24||water<0||water>15||smoke<0){toast("Enter valid sleep, water and cigarette values.");return;}
+  Object.assign(x,{sleep,water,cigarettes:Math.round(smoke)}); coachSaveDay(); renderCoach(); toast("Lifestyle log saved");
+};
+$("saveMeasures").onclick=()=>{
+  const x=dayExtra(); let any=false;
+  for(const [id,k] of [["waistInput","waist"],["chestInput","chest"],["hipInput","hip"]]){
+    const v=$(id).value.trim(); if(v==="")continue; const n=+v;if(!Number.isFinite(n)||n<30||n>250){toast("Check the measurement values.");return;}x[k]=n;any=true;
+  }
+  if(!any){toast("Enter at least one measurement.");return;}
+  coachSaveDay(); renderCoach(); toast("Measurements saved");
+};
+["simCalories","simSteps","simDays"].forEach(id=>$(id).addEventListener("input",renderSimulator));
+["groceryBudget","mealDays"].forEach(id=>$(id).addEventListener("input",renderMealPlan));
+$("makeGrocery").onclick=buildGrocery;
+
+
+$("applyAutoPlan").onclick=applyAutoPlan;
+$("recalcAutoPlan").onclick=()=>{renderAutoPlan();renderSimulator();renderSafety();toast("Recommendations recalculated");};
+
+// ---------- boot + sync ----------
+if(state.tab==="setup") state.tab="today";
+if(needsSetup()) openWizard(true); else render();
+$("syncState").textContent="Saved on this device";
+(async()=>{
+  try{ db = window.claude && window.claude.use ? await window.claude.use("db") : null; }catch(e){ db=null; }
+  if(!db && WS){
+    try{
+      const [rs, rd] = await Promise.all([WS.get("dl_settings2").catch(()=>null), WS.get("dl_days2").catch(()=>null)]);
+      const val = r => r==null ? null : (typeof r==="string" ? r : r.value);
+      const vs=val(rs), vd=val(rd);
+      if(vs){ state.settings=normSettings(JSON.parse(vs)); }
+      if(vd){ const dd=JSON.parse(vd); state.days={}; for(const [k,d] of Object.entries(dd)) state.days[k]=normDay(k,d); }
+      wsReady=true;
+      if(!vs && !vd){ lsSet("dl_settings2",state.settings); lsSet("dl_days2",state.days); }   // first run: copy anything local
+      try{ localStorage.setItem("dl_settings2",JSON.stringify(state.settings)); localStorage.setItem("dl_days2",JSON.stringify(state.days)); }catch(e){}
+      $("syncState").textContent="Saved to your Claude account"; $("storeWarn").hidden=true;
+      if(state.tab==="setup" && WZ && WZ.first && !needsSetup()) state.tab="today";
+      render(); return;
+    }catch(e){ console.warn(e); }
+  }
+  if(!db){ $("syncState").textContent = storageOK ? "Saved on this device only" : "Not saving"; $("storeWarn").hidden = storageOK; return; }
+  $("syncState").textContent="Synced";
+  const onErr=()=>{ $("syncState").textContent="Sync paused · saving locally"; };
+  db.doc("settings/main").onSnapshot(snap=>{ if(snap.exists){ state.settings=normSettings(JSON.parse(JSON.stringify(snap.data()))); lsSet("dl_settings2",state.settings); if(state.tab==="setup" && WZ && WZ.first && !needsSetup()) state.tab="today"; render(); } }, onErr);
+  db.collection("days").orderBy("date","desc").limit(400).onSnapshot(qs=>{
+    qs.docs.forEach(d=>{ if(d.exists && !dayTimers[d.id]) state.days[d.id]=normDay(d.id, JSON.parse(JSON.stringify(d.data()))); });
+    lsSet("dl_days2",state.days); render();
+  }, onErr);
+})();
+// new day: move to today automatically; yesterday stays saved
+let lastToday=todayKey();
+setInterval(()=>{ const t=todayKey(); if(t!==lastToday){ if(state.current===lastToday) state.current=t; lastToday=t; render(); } }, 30000);
+})();
+</script>
+
+</body></html>
