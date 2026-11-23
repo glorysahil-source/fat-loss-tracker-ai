@@ -1164,8 +1164,8 @@ $("zCalcBf").onclick=()=>{
     const inch=v=>v/2.54, hi=inch(h), wa=inch(waist), ne=inch(neck), hp=inch(hip);
     let den;
     if(gender==="female"){
-      if(!(hip>=40&&hip<=220)||wa+hp<=ne) err="Enter a valid hip measurement.";
-      else den=1.29579-0.35004*Math.log10(wa+hp-ne)+0.22100*Math.log10(hi);
+      if(!(hip>=40&&hip<=220)||waist+hip<=neck) err="Enter a valid hip measurement.";
+      else den=1.29579-0.35004*Math.log10(waist+hip-neck)+0.22100*Math.log10(h);
     } else {
       if(wa<=ne) err="Waist must be greater than neck. Check measurements.";
       else den=1.0324-0.19077*Math.log10(wa-ne)+0.15456*Math.log10(hi);
