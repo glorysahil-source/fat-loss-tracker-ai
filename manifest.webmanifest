@@ -1,0 +1,19 @@
+{
+  "name": "Fat Loss Planner",
+  "short_name": "Fat Loss",
+  "description": "Personal fat loss planner, food log and progress tracker.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#EDEFEA",
+  "theme_color": "#0F766E",
+  "icons": [
+    {
+      "src": "./icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
