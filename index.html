@@ -447,6 +447,21 @@ input[type=number]{border:1px solid var(--line);background:var(--bg);border-radi
     </div>
     <p class="note">This is a transparent, offline calculation engine—not a connected generative AI model. It recalculates recommendations from your saved logs. Applying a plan changes your existing daily targets.</p>
   </section>
+  <section class="card" id="bodyFatCalculator">
+    <div class="cardhead"><h2>Body Fat % Calculator</h2><span class="pill idle" id="bfCalcStatus">US Navy estimate</span></div>
+    <p class="note">Enter measurements in centimetres. Height and weight are prefilled from your planner where available. Measure waist and neck snugly; for female calculation, hip is also required.</p>
+    <div class="field"><label class="label" for="bfCalcGender">Formula</label><select id="bfCalcGender" style="border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:10px;width:100%"><option value="male">Male</option><option value="female">Female</option></select></div>
+    <div class="grid">
+      <div class="field"><label class="label" for="bfCalcHeight">Height (cm)</label><input type="number" id="bfCalcHeight" min="100" max="230" step="0.1" inputmode="decimal" placeholder="170"></div>
+      <div class="field"><label class="label" for="bfCalcWeight">Weight (kg)</label><input type="number" id="bfCalcWeight" min="20" max="300" step="0.1" inputmode="decimal" placeholder="70"></div>
+      <div class="field"><label class="label" for="bfCalcWaist">Waist (cm)</label><input type="number" id="bfCalcWaist" min="30" max="200" step="0.1" inputmode="decimal" placeholder="85"></div>
+      <div class="field"><label class="label" for="bfCalcNeck">Neck (cm)</label><input type="number" id="bfCalcNeck" min="20" max="80" step="0.1" inputmode="decimal" placeholder="38"></div>
+      <div class="field" id="bfHipField"><label class="label" for="bfCalcHip">Hip (cm) · female formula</label><input type="number" id="bfCalcHip" min="40" max="220" step="0.1" inputmode="decimal" placeholder="100"></div>
+    </div>
+    <div class="row"><button type="button" class="btn" id="calculateBodyFat">Calculate & save today's result</button><button type="button" class="btn ghost" id="previewBodyFat">Calculate preview</button></div>
+    <div id="bfCalcResult" class="status idle">Enter measurements and calculate your estimate.</div>
+    <p class="note">This is a circumference-based estimate, not a direct body-fat measurement. Hydration, measurement technique and body shape can affect accuracy. Do not treat it as a medical diagnosis.</p>
+  </section>
   <section class="card">
     <div class="cardhead"><h2>Personal coach</h2><span class="pill idle" id="coachStatus">Based on your logs</span></div>
     <div id="coachAdvice" class="status idle">Log a few days to unlock useful trend-based feedback.</div>
@@ -1240,12 +1255,67 @@ function applyAutoPlan(){
   toast("Suggested daily plan applied");
 }
 
+function bodyFatFormula(){
+  const gender=$("bfCalcGender").value, h=+$("bfCalcHeight").value, w=+$("bfCalcWeight").value;
+  const waist=+$("bfCalcWaist").value, neck=+$("bfCalcNeck").value, hip=+$("bfCalcHip").value;
+  if(!(h>=100&&h<=230&&w>=20&&w<=300&&waist>=30&&waist<=200&&neck>=20&&neck<=80)){
+    return {error:"Enter valid height, weight, waist and neck measurements in centimetres."};
+  }
+  const inch=cm=>cm/2.54, hi=inch(h), wa=inch(waist), ne=inch(neck), hp=inch(hip);
+  let denominator;
+  if(gender==="female"){
+    if(!(hip>=40&&hip<=220)) return {error:"Enter a valid hip measurement for the female formula."};
+    if(wa+hp<=ne) return {error:"Check your waist, hip and neck measurements."};
+    denominator=1.29579-0.35004*Math.log10(wa+hp-ne)+0.22100*Math.log10(hi);
+  } else {
+    if(wa<=ne) return {error:"Waist measurement must be greater than neck measurement. Check the values and units."};
+    denominator=1.0324-0.19077*Math.log10(wa-ne)+0.15456*Math.log10(hi);
+  }
+  const pct=495/denominator-450;
+  if(!Number.isFinite(pct)||pct<2||pct>75) return {error:"The result is outside the expected range. Recheck your measurements and units."};
+  const fat=w*pct/100, lean=w-fat;
+  return {gender,height:h,weight:w,waist,neck,hip:gender==="female"?hip:null,pct,fat,lean};
+}
+function renderBodyFat(){
+  const x=dayExtra(), s=state.settings, h=((+s.heightFt||0)*12+(+s.heightIn||0))*2.54, w=currentWeight()?.w||+s.bodyWeight||0;
+  if(document.activeElement!==$("bfCalcGender")) $("bfCalcGender").value=x.bfGender||"male";
+  setCoachInput("bfCalcHeight",x.bfHeight|| (h>0?h.toFixed(1):""));
+  setCoachInput("bfCalcWeight",x.bfWeight|| (w>0?w.toFixed(1):""));
+  setCoachInput("bfCalcWaist",x.bfWaist||x.waist||"");
+  setCoachInput("bfCalcNeck",x.bfNeck||"");
+  setCoachInput("bfCalcHip",x.bfHip||x.hip||"");
+  $("bfHipField").hidden=$("bfCalcGender").value!=="female";
+  if(x.bodyFatPct!=null){
+    const prev=Object.entries(state.days).filter(([k,d])=>k!==todayKey()&&d.extra&&d.extra.bodyFatPct!=null).sort((a,b)=>a[0].localeCompare(b[0])).pop();
+    const change=prev?(x.bodyFatPct-(+prev[1].extra.bodyFatPct)):null;
+    $("bfCalcResult").className="status ok";
+    $("bfCalcResult").innerHTML=`<b>Estimated body fat: ${(+x.bodyFatPct).toFixed(1)}%</b><br>Fat mass: ${(+x.bfFatMass).toFixed(1)} kg · Lean body mass: ${(+x.bfLeanMass).toFixed(1)} kg${change==null?"":`<br>Change since previous saved estimate: ${change>0?"+":""}${change.toFixed(1)} percentage points`}`;
+    $("bfCalcStatus").textContent="Saved for today";
+  } else {
+    $("bfCalcResult").className="status idle";
+    $("bfCalcResult").textContent="Enter measurements and calculate your estimate.";
+    $("bfCalcStatus").textContent="US Navy estimate";
+  }
+}
+function calculateBodyFat(save){
+  const r=bodyFatFormula();
+  if(r.error){$("bfCalcResult").className="status bad";$("bfCalcResult").textContent=r.error;return;}
+  const prev=Object.entries(state.days).filter(([k,d])=>k!==todayKey()&&d.extra&&d.extra.bodyFatPct!=null).sort((a,b)=>a[0].localeCompare(b[0])).pop();
+  const delta=prev?r.pct-(+prev[1].extra.bodyFatPct):null;
+  $("bfCalcResult").className="status ok";
+  $("bfCalcResult").innerHTML=`<b>Estimated body fat: ${r.pct.toFixed(1)}%</b><br>Fat mass: ${r.fat.toFixed(1)} kg · Lean body mass: ${r.lean.toFixed(1)} kg${delta==null?"":`<br>Change since previous saved estimate: ${delta>0?"+":""}${delta.toFixed(1)} percentage points`}`;
+  $("bfCalcStatus").textContent=save?"Calculated":"Preview only";
+  if(save){
+    const x=dayExtra(); Object.assign(x,{bfGender:r.gender,bfHeight:r.height,bfWeight:r.weight,bfWaist:r.waist,bfNeck:r.neck,bfHip:r.hip,bodyFatPct:+r.pct.toFixed(1),bfFatMass:+r.fat.toFixed(2),bfLeanMass:+r.lean.toFixed(2)});
+    coachSaveDay(); $("bfCalcStatus").textContent="Saved for today"; toast("Body-fat estimate saved");
+  }
+}
 function renderCoach(){
   const x=dayExtra(), d=getDay(todayKey()), entries=Object.entries(state.days).sort((a,b)=>a[0].localeCompare(b[0]));
   setCoachInput("sleepInput",x.sleep); setCoachInput("waterInput",x.water); setCoachInput("smokeInput",x.cigarettes);
   setCoachInput("waistInput",x.waist); setCoachInput("chestInput",x.chest); setCoachInput("hipInput",x.hip);
   setCoachInput("simCalories",state.settings.targetIntake||1800); setCoachInput("simSteps",state.settings.planSteps||0);
-  renderAutoPlan(); renderFood(); renderPlateau(); renderConsistency(); renderMeasurements(); renderLifestyleFeedback(); renderSimulator(); renderSafety(); renderAchievements(); renderMealPlan();
+  renderAutoPlan(); renderBodyFat(); renderFood(); renderPlateau(); renderConsistency(); renderMeasurements(); renderLifestyleFeedback(); renderSimulator(); renderSafety(); renderAchievements(); renderMealPlan();
   $("waterSummary").textContent=(x.water==null?"0":(+x.water).toFixed(1))+" L";
   $("sleepSummary").textContent=x.sleep==null?"—":(+x.sleep).toFixed(1)+" h";
   const tracked=entries.filter(([k,v])=>v.eaten!=null || v.steps>0 || v.weight!=null).length;
@@ -1346,6 +1416,10 @@ function buildGrocery(){
   $("groceryCost").textContent=`Estimated cost: ₹${cost}`;
   if(cost>safeNum("groceryBudget",900)) $("groceryList").textContent+=` This exceeds your entered budget by about ₹${cost-safeNum("groceryBudget",900)}; reduce quantities or substitute locally priced staples.`;
 }
+$("calculateBodyFat").onclick=()=>calculateBodyFat(true);
+$("previewBodyFat").onclick=()=>calculateBodyFat(false);
+$("bfCalcGender").addEventListener("change",()=>{ $("bfHipField").hidden=$("bfCalcGender").value!=="female"; calculateBodyFat(false); });
+["bfCalcHeight","bfCalcWeight","bfCalcWaist","bfCalcNeck","bfCalcHip"].forEach(id=>$(id).addEventListener("input",()=>calculateBodyFat(false)));
 $("foodSearch").addEventListener("input",renderFood);
 $("foodResults").addEventListener("click",e=>{
   const b=e.target.closest("[data-food]"); if(!b)return;
