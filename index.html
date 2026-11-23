@@ -1148,10 +1148,18 @@ wzNum("zW","w"); wzNum("zFt","ft"); wzNum("zIn","inch"); wzNum("zBf","bf"); wzNu
 $("zBfGender").addEventListener("change",()=>{WZ.bfGender=$("zBfGender").value;$("zBfHipField").hidden=WZ.bfGender!=="female";WZ.bfAutoResult="";});
 for(const [id,key] of [["zBfWaist","bfWaist"],["zBfNeck","bfNeck"],["zBfHip","bfHip"]]) $(id).addEventListener("input",()=>{WZ[key]=$(id).value===""?null:+$(id).value;WZ.bfAutoResult="";});
 $("zCalcBf").onclick=()=>{
+  // Read directly from visible setup inputs so the calculator never uses stale wizard state.
+  WZ.w=$("zW").value===""?null:+$("zW").value;
+  WZ.ft=$("zFt").value===""?null:+$("zFt").value;
+  WZ.inch=$("zIn").value===""?null:+$("zIn").value;
+  WZ.bfWaist=$("zBfWaist").value===""?null:+$("zBfWaist").value;
+  WZ.bfNeck=$("zBfNeck").value===""?null:+$("zBfNeck").value;
+  WZ.bfHip=$("zBfHip").value===""?null:+$("zBfHip").value;
   const h=((+WZ.ft||0)*12+(+WZ.inch||0))*2.54, waist=+$("zBfWaist").value, neck=+$("zBfNeck").value, hip=+$("zBfHip").value;
   const gender=$("zBfGender").value, w=+WZ.w;
   let pct=null, err="";
-  if(!(h>=100&&h<=230&&w>=20&&w<=300&&waist>=30&&waist<=200&&neck>=20&&neck<=80)) err="Enter valid weight, height, waist and neck first.";
+  if(!(h>=100&&h<=230&&w>=30&&w<=250)) err="First fill valid Weight (30–250 kg), Height (ft and inches) above. Then enter waist and neck."; 
+  else if(!(waist>=30&&waist<=200&&neck>=20&&neck<=80)) err="Enter valid waist and neck measurements in cm.";
   else {
     const inch=v=>v/2.54, hi=inch(h), wa=inch(waist), ne=inch(neck), hp=inch(hip);
     let den;
