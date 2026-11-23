@@ -308,7 +308,17 @@ input[type=number]{border:1px solid var(--line);background:var(--bg);border-radi
       <div class="field"><label class="label" for="zIn">Height in</label><input type="number" id="zIn" min="0" max="11.5" step="0.5" inputmode="decimal" placeholder="8"></div>
       <div class="field"><label class="label" for="zBf">Body fat %</label><input type="number" id="zBf" min="4" max="50" step="0.5" inputmode="decimal" placeholder="18"></div>
     </div>
-    <p class="note">Not sure of your body fat? Rough guide for men: clear abs ≈ 10–12%, upper abs visible ≈ 13–15%, faint outline ≈ 16–18%, no abs ≈ 20%+.</p>
+    <section style="border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:12px">
+      <div><h2 style="font-size:19px">Calculate body fat automatically</h2><p class="note">Use the US Navy circumference estimate. Enter measurements in cm; the result fills your Body fat % above.</p></div>
+      <div class="field"><label class="label" for="zBfGender">Formula</label><select id="zBfGender" style="border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:10px;width:100%"><option value="male">Male</option><option value="female">Female</option></select></div>
+      <div class="grid">
+        <div class="field"><label class="label" for="zBfWaist">Waist (cm)</label><input type="number" id="zBfWaist" min="30" max="200" step="0.1" placeholder="85"></div>
+        <div class="field"><label class="label" for="zBfNeck">Neck (cm)</label><input type="number" id="zBfNeck" min="20" max="80" step="0.1" placeholder="38"></div>
+        <div class="field" id="zBfHipField" hidden><label class="label" for="zBfHip">Hip (cm)</label><input type="number" id="zBfHip" min="40" max="220" step="0.1" placeholder="100"></div>
+      </div>
+      <div class="row"><button type="button" class="btn" id="zCalcBf">Calculate body fat</button><span class="note" id="zBfCalcResult">Enter measurements to calculate.</span></div>
+    </section>
+    <p class="note">This is an estimate, not a direct body-fat measurement. Measure consistently; hydration and technique affect accuracy. You can still enter a known body-fat percentage manually.</p>
     <div class="field" hidden><span class="label">Your day, outside planned walks and workouts</span>
       <div class="seg full3" id="zLife"><button type="button" data-v="1.2" class="on">Mostly sitting</button><button type="button" data-v="1.35">Mixed</button><button type="button" data-v="1.5">On my feet</button></div>
     </div>
@@ -1060,7 +1070,7 @@ function bfInfo(){
 let WZ=null;
 function openWizard(first){
   const s=state.settings, cw=currentWeight(), b=s.bf||{};
-  WZ={step:1, first:!!first, w: cw?cw.w:(b.weight||null), ft:s.heightFt||null, inch:s.heightIn??null, bf:b.pct||null,
+  WZ={step:1, first:!!first, w: cw?cw.w:(b.weight||null), ft:s.heightFt||null, inch:s.heightIn??null, bf:b.pct||null, bfGender:(s.bodyFatCalc&&s.bodyFatCalc.gender)||"male", bfWaist:(s.bodyFatCalc&&s.bodyFatCalc.waist)||null, bfNeck:(s.bodyFatCalc&&s.bodyFatCalc.neck)||null, bfHip:(s.bodyFatCalc&&s.bodyFatCalc.hip)||null,
       life:s.lifeFactor||1.2, maint: s.maintMode==="manual" ? s.maintenance : null, goal:s.goalBf||null,
       pace: s.goalDate?"date":"safe", date:s.goalDate||"", steps: s.planSteps??8000, work: s.planWork??0};
   state.tab="setup"; hideTip(); render(); scrollTo({top:0});
@@ -1078,7 +1088,11 @@ function renderWizard(){
   $("zNext").textContent = st===3 ? "Start tracking" : "Next";
   $("zSkip").hidden = WZ.first;
   const d=(id,v)=>setIf(id,v);
-  d("zW",WZ.w); d("zFt",WZ.ft); d("zIn",WZ.inch); d("zBf",WZ.bf); d("zMaint",WZ.maint); d("zGoal",WZ.goal); d("zDate",WZ.date); d("zSteps",WZ.steps); d("zWork",WZ.work);
+  d("zW",WZ.w); d("zFt",WZ.ft); d("zIn",WZ.inch); d("zBf",WZ.bf); d("zMaint",WZ.maint);
+  if(document.activeElement!==$("zBfGender")) $("zBfGender").value=WZ.bfGender||"male";
+  d("zBfWaist",WZ.bfWaist); d("zBfNeck",WZ.bfNeck); d("zBfHip",WZ.bfHip);
+  $("zBfHipField").hidden=(WZ.bfGender||"male")!=="female";
+  $("zBfCalcResult").textContent=WZ.bfAutoResult||"Enter measurements to calculate."; d("zGoal",WZ.goal); d("zDate",WZ.date); d("zSteps",WZ.steps); d("zWork",WZ.work);
   document.querySelectorAll("#zLife button").forEach(x=>x.classList.toggle("on",+x.dataset.v===+WZ.life));
   const est=wzMaintEst();
   $("zMaint").placeholder = est ? String(est) : "Auto";
@@ -1115,7 +1129,7 @@ function renderWizard(){
 }
 function wzKcalPerStep(){ const hCm=((+WZ.ft||0)*12+(+WZ.inch||0))*2.54; const stride=hCm*0.414/100; return 3.5*3.5*(WZ.w||60)/200*(stride/1000/5*60); }
 function wzValid(step){
-  if(step===1){ if(!(WZ.w>=30)) return "Enter your weight"; if(!(WZ.ft>=3)) return "Enter your height"; if(!(WZ.bf>=4)) return "Enter your body fat %"; }
+  if(step===1){ if(!(WZ.w>=30)) return "Enter your weight"; if(!(WZ.ft>=3)) return "Enter your height"; if(!(WZ.bf>=4)) return "Enter your body fat % (calculate it below or enter it manually)"; }
   if(step===2){ if(!(WZ.goal>=4)) return "Enter a goal body fat"; const g=wzMath(); if(g && g.fatLeft<=0.05) return "Pick a goal below your current body fat"; if(WZ.pace==="date" && !WZ.date) return "Pick a date or choose safe pace"; }
   return null;
 }
@@ -1123,14 +1137,40 @@ function wzFinish(){
   const g=wzMath(), o=WZ._out; if(!g||!o) return;
   const s=state.settings;
   Object.assign(s,{heightFt:+WZ.ft, heightIn:+WZ.inch||0, bodyWeight:+WZ.w, lifeFactor:+WZ.life, maintenance:o.maint, maintMode: WZ.maint>0?"manual":"auto", targetIntake:o.cal, proteinGoal:o.prot,
-    planSteps:+WZ.steps||0, planWork:+WZ.work||0, bf:{pct:+WZ.bf, weight:+WZ.w, date:todayKey()}, goalBf:+WZ.goal, goalDate: WZ.pace==="date"?WZ.date:null,
+    planSteps:+WZ.steps||0, planWork:+WZ.work||0, bf:{pct:+WZ.bf, weight:+WZ.w, date:todayKey()}, bodyFatCalc:{gender:WZ.bfGender||"male",waist:+WZ.bfWaist||null,neck:+WZ.bfNeck||null,hip:+WZ.bfHip||null}, goalBf:+WZ.goal, goalDate: WZ.pace==="date"?WZ.date:null,
     bfRate:null, basis:"bf", setupDone:true, _bfMigrated:true});
   if(!s.cutStart) s.cutStart=todayKey();
   const d=getDay(todayKey()); if(d.weight==null){ d.weight=+WZ.w; saveDay(todayKey()); }
   saveSettings(); state.tab="today"; lsSet("dl_tab","today"); render(); scrollTo({top:0}); toast("You’re set. Log your day here.");
 }
 function wzNum(id,key){ $(id).addEventListener("input",()=>{ const v=$(id).value; WZ[key]= v===""?null:+v; renderWizard(); }); }
-wzNum("zW","w"); wzNum("zFt","ft"); wzNum("zIn","inch"); wzNum("zBf","bf"); wzNum("zMaint","maint"); wzNum("zGoal","goal"); wzNum("zSteps","steps"); wzNum("zWork","work");
+wzNum("zW","w"); wzNum("zFt","ft"); wzNum("zIn","inch"); wzNum("zBf","bf"); wzNum("zMaint","maint");
+$("zBfGender").addEventListener("change",()=>{WZ.bfGender=$("zBfGender").value;$("zBfHipField").hidden=WZ.bfGender!=="female";WZ.bfAutoResult="";});
+for(const [id,key] of [["zBfWaist","bfWaist"],["zBfNeck","bfNeck"],["zBfHip","bfHip"]]) $(id).addEventListener("input",()=>{WZ[key]=$(id).value===""?null:+$(id).value;WZ.bfAutoResult="";});
+$("zCalcBf").onclick=()=>{
+  const h=((+WZ.ft||0)*12+(+WZ.inch||0))*2.54, waist=+$("zBfWaist").value, neck=+$("zBfNeck").value, hip=+$("zBfHip").value;
+  const gender=$("zBfGender").value, w=+WZ.w;
+  let pct=null, err="";
+  if(!(h>=100&&h<=230&&w>=20&&w<=300&&waist>=30&&waist<=200&&neck>=20&&neck<=80)) err="Enter valid weight, height, waist and neck first.";
+  else {
+    const inch=v=>v/2.54, hi=inch(h), wa=inch(waist), ne=inch(neck), hp=inch(hip);
+    let den;
+    if(gender==="female"){
+      if(!(hip>=40&&hip<=220)||wa+hp<=ne) err="Enter a valid hip measurement.";
+      else den=1.29579-0.35004*Math.log10(wa+hp-ne)+0.22100*Math.log10(hi);
+    } else {
+      if(wa<=ne) err="Waist must be greater than neck. Check measurements.";
+      else den=1.0324-0.19077*Math.log10(wa-ne)+0.15456*Math.log10(hi);
+    }
+    if(!err) pct=495/den-450;
+    if(!err&&(!Number.isFinite(pct)||pct<2||pct>75)) err="Result out of range. Recheck measurements.";
+  }
+  if(err){$("zBfCalcResult").textContent=err;return;}
+  WZ.bf=+pct.toFixed(1); WZ.bfGender=gender; WZ.bfWaist=waist; WZ.bfNeck=neck; WZ.bfHip=gender==="female"?hip:null; WZ.bfAutoResult="Estimated body fat: "+WZ.bf.toFixed(1)+"% · saved into Body fat % above.";
+  $("zBf").value=WZ.bf; $("zBfCalcResult").textContent=WZ.bfAutoResult;
+  if(!WZ.goal) WZ.goal=Math.max(8,Math.round((WZ.bf-4)*2)/2);
+  renderWizard();
+}; wzNum("zGoal","goal"); wzNum("zSteps","steps"); wzNum("zWork","work");
 $("zDate").addEventListener("change",()=>{ WZ.date=$("zDate").value; renderWizard(); });
 document.querySelectorAll("#zLife button").forEach(x=>x.onclick=()=>{ WZ.life=+x.dataset.v; renderWizard(); });
 $("zPaceSafe").onclick=()=>{ WZ.pace="safe"; renderWizard(); };
